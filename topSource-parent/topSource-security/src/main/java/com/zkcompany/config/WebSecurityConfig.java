@@ -2,6 +2,7 @@ package com.zkcompany.config;
 
 import com.zkcompany.entity.IdWorker;
 import com.zkcompany.entity.Result;
+import com.zkcompany.entity.StatusCode;
 import com.zkcompany.entity.SystemConstants;
 import com.zkcompany.filter.AuthorizationSecurityUserFilter;
 import jakarta.servlet.ServletException;
@@ -67,6 +68,7 @@ public class WebSecurityConfig{
                 httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(new AuthenticationEntryPoint() {
                     @Override
                     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+                        //自定义异常处理信息；
                         Object message = redisTemplate.boundValueOps(SystemConstants.redis_errorSecurity_message).get();
                         if(Objects.isNull(message)){
                             message = "用户认证服务失败！请查看异常信息";
@@ -74,7 +76,7 @@ public class WebSecurityConfig{
                             redisTemplate.delete(SystemConstants.redis_errorSecurity_message);
                         }
                         response.setContentType("application/json;charset=UTF-8");
-                        Result<Object> result = new Result<>(false, HttpStatus.UNAUTHORIZED.value(), message.toString(),authException.getLocalizedMessage());
+                        Result<Object> result = new Result<>(false, StatusCode.SC_UNAUTHORIZED, message.toString(),authException.getLocalizedMessage());
                         response.getWriter().println(result.toJsonString(result));
                     }
                 }).accessDeniedHandler(new AccessDeniedHandler() {
