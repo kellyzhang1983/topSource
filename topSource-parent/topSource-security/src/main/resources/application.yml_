@@ -1,0 +1,31 @@
+server:
+  port: 9091
+
+spring:
+  application:
+    name: security-center-server
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/db_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: 123456
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 7001
+      password: 123456
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos
+        port: 9091
+        namespace: topsource_dev
+        group: TOPSOURCE_GROUP
+      config:
+        import-check:
+          enabled: false
+    main:
+      allow-bean-definition-overriding: true
+

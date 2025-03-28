@@ -1,0 +1,28 @@
+registry {
+  # file 、nacos 、eureka、redis、zk、consul、etcd3、sofa
+  type = "nacos"
+
+  nacos {
+    application = "seata-tc-server"
+    serverAddr = "127.0.0.1:8848"
+    group = "SEATA_GROUP"
+    namespace = "topsource_dev"
+    cluster = "default"
+    username = "nacos"
+    password = "nacos"
+  }
+}
+
+config {
+  # file、nacos 、apollo、zk、consul、etcd3
+  type = "nacos"
+
+  nacos {
+    serverAddr = "127.0.0.1:8848"
+    namespace = "topsource_dev"
+    group = "SEATA_GROUP"
+    username = "nacos"
+    password = "nacos"
+    dataId = "seataServer.properties"
+  }
+}

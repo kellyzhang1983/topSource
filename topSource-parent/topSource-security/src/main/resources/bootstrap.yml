@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: security-center-server
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        name: security-center-server
+        namespace: topsource_dev
+        group: TOPSOURCE_GROUP
+        username: nacos
+        password: nacos
+        file-extension: yaml
+

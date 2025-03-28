@@ -1,0 +1,71 @@
+# 事务日志存储配置
+store.mode=db
+store.publicKey=
+
+# 数据库存储属性
+store.db.datasource=druid
+store.db.dbType=mysql
+store.db.driverClassName=com.mysql.jdbc.Driver
+store.db.url=jdbc:mysql://127.0.0.1:3306/db_seata?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+store.db.user=root
+store.db.password=123456
+store.db.minConn=5
+store.db.maxConn=100
+store.db.globalTable=global_table
+store.db.branchTable=branch_table
+store.db.lockTable=lock_table
+store.db.queryLimit=100
+store.db.maxWait=5000
+
+# 网络传输配置
+transport.type=TCP
+transport.server=NIO
+transport.heartbeat=true
+transport.enableClientBatchSendRequest=true
+
+# 线程工厂配置
+transport.threadFactory.bossThreadPrefix=NettyBoss
+transport.threadFactory.workerThreadPrefix=NettyServerNIOWorker
+transport.threadFactory.serverExecutorThreadPrefix=NettyServerBizHandler
+transport.threadFactory.shareBossWorker=false
+transport.threadFactory.clientSelectorThreadPrefix=NettyClientSelector
+transport.threadFactory.clientSelectorThreadSize=1
+transport.threadFactory.clientWorkerThreadPrefix=NettyClientWorkerThread
+transport.threadFactory.workerThreadSize=default
+
+# 关闭时的等待时间
+transport.shutdown.wait=3
+transport.serialization=seata
+transport.compressor=none
+
+# 服务配置
+service.vgroupMapping.my_tx_group=default
+service.default.grouplist=127.0.0.1:8091
+service.enableDegrade=false
+service.disableGlobalTransaction=false
+
+# 恢复配置
+service.recovery.committingRetryPeriod=5000
+service.recovery.asynCommittingRetryPeriod=5000
+service.recovery.rollbackingRetryPeriod=5000
+service.recovery.timeoutRetryPeriod=5000
+
+# 客户端 RM 配置
+client.rm.asyncCommitBufferLimit=10000
+client.rm.lock.retryInterval=10
+client.rm.lock.retryTimes=30
+client.rm.lock.retryPolicyBranchRollbackOnConflict=true
+client.rm.reportRetryCount=5
+client.rm.tableMetaCheckEnable=false
+
+# 客户端 TM 配置
+client.tm.commitRetryCount=5
+client.tm.rollbackRetryCount=5
+
+# 撤销日志配置
+client.undo.dataValidation=true
+client.undo.logSerialization=jackson
+client.undo.logTable=undo_log
+
+# 日志配置
+client.log.exceptionRate=100

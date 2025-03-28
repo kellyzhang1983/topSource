@@ -1,0 +1,42 @@
+server:
+  port: 8092
+spring:
+  application:
+    name: canal-client
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/db_order?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: 123456
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 7001
+      password: 123456
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos
+        port: 8092
+        namespace: topsource_dev
+        group: TOPSOURCE_GROUP
+      config:
+        import-check:
+          enabled: false
+
+#canal配置
+canal:
+  client:
+    instances:
+      # Canal 服务器地址
+      host: 127.0.0.1
+      # Canal 服务器端口
+      port: 11111
+      # Canal 实例名称
+      destination: example
+      username: "admin"
+      password: "admin"
+      # 批次大小，每次从 Canal 获取消息的最大数量
+      batchSize: 500

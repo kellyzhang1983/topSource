@@ -1,0 +1,148 @@
+server:
+  port: 10001
+spring:
+  application:
+    name: user-gateway
+  main:
+    web-application-type: reactive
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos
+        port: 10001
+        namespace: topsource_dev
+        group: TOPSOURCE_GROUP
+      config:
+        import-check:
+          enabled: false
+    circuitbreaker:
+      resilience4j:
+        enabled: true
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*" #跨域处理 允许所有的域
+            allowedMethods: # 支持的方法
+              - GET
+              - POST
+              - PUT
+              - DELETE
+      routes:
+        - id: user-route
+          uri: lb://user-server
+          predicates:
+            - Path=/api/user/**,/api/point/**
+          filters:
+            - StripPrefix=1
+      default-filters:
+#       - name: RequestRateLimiter
+#         args:
+#           keyResolver: "#{@ipKeyResolver}"
+#           #基于令牌每秒钟生成一个，配置的是1秒10个，默认的是每秒生成？个
+#           redis-rate-limiter.replenishRate: 50
+#           #令牌的大小，总共令牌桶每秒能装多少个？强求。
+#           redis-rate-limiter.burstCapacity: 60
+#       - name: AddResponseHeader
+#         args:
+#           name: X-RateLimit-Message
+#           value: "SUCESS"
+        - name: CircuitBreaker
+          args:
+            name: usergateway_circuitbreaker
+            fallbackUri: forward:/errorback
+            recordExceptions:
+             # 添加这一行，将 500 异常记录为失败
+              - org.springframework.web.client.HttpServerErrorException.InternalServerError
+            #ignoreExceptions:
+              # 排除权限不足异常，不触发熔断
+            #  - org.springframework.security.access.AccessDeniedException
+        - name: RequestCountRateLimiter
+          args:
+            name: userServer_ratelimiter
+        - name: RequestIpRateLimiter
+          args:
+            name: userIpAdressratelimiter
+            keyResolver: "#{@ipKeyResolver}"
+
+
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 7001
+      password: 123456
+
+#eureka:
+#  client:
+#    service-url:
+#      # Eureka 服务器的地址
+#      defaultZone: http://127.0.0.1:10011/eureka
+#    # 将客户端服务注册到 Eureka 服务器
+#    register-with-eureka: true
+#    # 从 Eureka 服务器获取服务注册信息
+#    fetch-registry: true
+#  instance:
+#    prefer-ip-address: false # 优先使用 IP 地址进行注册
+#    hostname: ${spring.application.name}
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-type: COUNT_BASED
+        #表示熔断器会统计最近30次请求，根据这30次请求的成功或失败来计算失败率
+        slidingWindowSize: 30
+        #5次请求后，熔断器才会计算成功失败率
+        minimumNumberOfCalls: 5
+        #表示熔断器半开状态，会允许3次请求去调用被保护的服务，根据这3次请求的结果来决定熔断的下一步状态
+        #1、半开状态是熔断器从打开（Open）状态过渡到关闭（Closed）状态的中间状态。
+        #2、在半开状态下，熔断器会允许一定数量的请求去尝试调用服务，以此来判断服务是否已经恢复正常。
+        #3、如果这些尝试请求中的成功率较高，熔断器会关闭；如果失败率再次超过阈值，熔断器会重新打开。
+        permittedNumberOfCallsInHalfOpenState: 5
+        #表示熔断器打开后会等待3秒，然后再进入半开状态，尝试恢复服务调用
+        #当熔断器打开后，在这段时间内所有对被保护服务的请求都会直接触发降级逻辑，不会实际调用服务。
+        #等待一段时间的目的是给服务足够的时间来恢复，避免在服务还未恢复时就频繁尝试调用，导致熔断器频繁开合。
+        waitDurationInOpenState: 3s
+        #表示当最近 slidingWindowSize 次请求（这里是 10 次）中的失败率达到 30% 时，熔断器会打开。
+        failureRateThreshold: 50
+        # 定义慢调用的时间阈值
+        slowCallDurationThreshold: 2s
+        # 定义慢调用的比例阈值
+        slowCallRateThreshold: 50
+    instances:
+      #第一个熔断
+      usergateway_circuitbreaker:
+        base-config: default
+  ratelimiter:
+    configs:
+      requestCount:
+        # 在新的周期内，允许执行的最大请求数
+        limit-for-period: 10
+        # 限流器每隔1秒刷新一次，对limit-for-period进行重置，
+        limit-refresh-period: 1s
+        # 等待的默认时间
+        timeout-duration: 1
+      requestIp:
+        # 在新的周期内，允许执行的最大请求数
+        limit-for-period: 50
+        # 限流器每隔1秒刷新一次，对limit-for-period进行重置，
+        limit-refresh-period: 1s
+        # 等待的默认时间
+        timeout-duration: 1
+    instances:
+      userIpAdressratelimiter:
+        base-config: requestIp
+      userServer_ratelimiter:
+        base-config: requestCount
+  timelimiter:
+    configs:
+      default:
+        # 返回超过3S后，会开启融断，如果要调试，建议这里设置成300S来延长响应时间
+        timeout-duration: 300s
+
+
+logging:
+  level:
+    io.github.resilience4j: DEBUG
+    org.springframework.cloud.gateway: DEBUG

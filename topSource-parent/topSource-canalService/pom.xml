@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>topSource-parent</artifactId>
+        <groupId>com.zkcompany</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>topSource-canalService</artifactId>
+
+    <properties>
+        <!-- 设置JDK版本为17 -->
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <!-- 设置项目源代码的字符集编码为 UTF-8 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- 设置项目报告输出的字符集编码为 UTF-8 -->
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <tk.mybatis>4.1.5</tk.mybatis>
+        <mybatis.springboot>3.0.4</mybatis.springboot>
+        <redis.srpingboot>3.4.0</redis.srpingboot>
+        <canal.springboot>1.1.8</canal.springboot>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.zkcompany</groupId>
+            <artifactId>topSource-service-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.zkcompany</groupId>
+            <artifactId>topSource-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- canal 客户端依赖 -->
+        <dependency>
+            <groupId>com.alibaba.otter</groupId>
+            <artifactId>canal.protocol</artifactId>
+            <version>${canal.springboot}</version>
+            <scope>compile</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.alibaba.otter</groupId>
+            <artifactId>canal.client</artifactId>
+            <version>${canal.springboot}</version> <!-- 你可以根据实际情况选择合适的版本 -->
+            <scope>compile</scope>
+        </dependency>
+        <!-- canal 客户端依赖结束  -->
+
+        <!-- Spring Boot Starter for Redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <version>${redis.srpingboot}</version>
+        </dependency>
+
+        <!-- mySQL驱动包下载 -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!--通用Mapper相关依赖，可以直接调用方法拼接SQL-->
+        <dependency>
+            <groupId>tk.mybatis</groupId>
+            <artifactId>mapper</artifactId>
+            <version>${tk.mybatis}</version>
+        </dependency>
+        <!--与springboot3.1.4版本对应的mybatis版本是3.0.4-->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>${mybatis.springboot}</version>
+        </dependency>
+
+        <!-- nocos的服务发现与配置中心-->
+        <!-- 开始 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+        <!--如果不用spring-cloud-starter-netflix-eureka-client ，那么必须要spring-cloud-starter-loadbalancer开启负载均衡来找到NACOS上面的服务-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+        <!--如果要用bootstrap.properties集成nacos的配置中心，必须要导入bootstrap包，才能正常加载-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+        <!-- 结束 -->
+        <!-- nocos的服务发现与配置中心-->
+    </dependencies>
+
+</project>

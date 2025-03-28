@@ -1,0 +1,152 @@
+#Transport configuration, for client and server
+transport.type=TCP
+# 使用 NIO 作为服务端的网络传输模式
+transport.server=NIO
+# 开启心跳机制，用于保持客户端和服务端的连接
+transport.heartbeat=true
+# 事务管理器（TM）客户端不启用批量发送请求
+transport.enableTmClientBatchSendRequest=false
+# 资源管理器（RM）客户端启用批量发送请求
+transport.enableRmClientBatchSendRequest=true
+# 事务协调器（TC）服务端不启用批量发送响应
+transport.enableTcServerBatchSendResponse=false
+# RM 客户端向 TC 服务端发送请求的超时时间为 30000 毫秒
+transport.rpcRmRequestTimeout=30000
+# TM 客户端向 TC 服务端发送请求的超时时间为 30000 毫秒
+transport.rpcTmRequestTimeout=30000
+# TC 服务端处理请求的超时时间为 30000 毫秒
+transport.rpcTcRequestTimeout=30000
+# Netty 服务端 Boss 线程的前缀
+transport.threadFactory.bossThreadPrefix=NettyBoss
+# Netty 服务端 Worker 线程的前缀
+transport.threadFactory.workerThreadPrefix=NettyServerNIOWorker
+# Netty 服务端业务处理线程的前缀
+transport.threadFactory.serverExecutorThreadPrefix=NettyServerBizHandler
+transport.threadFactory.shareBossWorker=false
+transport.threadFactory.clientSelectorThreadPrefix=NettyClientSelector
+transport.threadFactory.clientSelectorThreadSize=1
+transport.threadFactory.clientWorkerThreadPrefix=NettyClientWorkerThread
+# Netty 服务端 Boss 线程的数量为 1
+transport.threadFactory.bossThreadSize=1
+transport.threadFactory.workerThreadSize=default
+# 服务关闭时的等待时间为 3 秒
+transport.shutdown.wait=3
+# 使用 Seata 自定义的序列化方式
+transport.serialization=seata
+# 不使用数据压缩
+transport.compressor=none
+
+#Transaction routing rules configuration, only for the client
+service.vgroupMapping.my_tx_group=default
+#If you use a registry, you can ignore it
+service.default.grouplist=127.0.0.1:8091
+service.disableGlobalTransaction=false
+
+client.metadataMaxAgeMs=30000
+# RM 客户端异步提交缓冲区的最大限制为 10000
+client.rm.asyncCommitBufferLimit=10000
+# RM 客户端获取锁的重试间隔为 10 毫秒
+client.rm.lock.retryInterval=10
+# RM 客户端获取锁的最大重试次数为 30 次
+client.rm.lock.retryTimes=30
+# 当获取锁冲突时，分支事务进行回滚
+client.rm.lock.retryPolicyBranchRollbackOnConflict=true
+# RM 客户端向 TC 服务端报告事务状态的重试次数为 5 次
+client.rm.reportRetryCount=5
+client.rm.tableMetaCheckEnable=true
+# RM 客户端表元数据检查的间隔时间为 60000 毫秒
+client.rm.tableMetaCheckerInterval=60000
+client.rm.sqlParserType=druid
+# RM 客户端不报告事务成功状态
+client.rm.reportSuccessEnable=false
+client.rm.sagaBranchRegisterEnable=false
+client.rm.sagaJsonParser=fastjson
+client.rm.tccActionInterceptorOrder=-2147482648
+client.rm.sqlParserType=druid
+# TM 客户端提交全局事务的重试次数为 5 次
+client.tm.commitRetryCount=5
+# TM 客户端回滚全局事务的重试次数为 5 次
+client.tm.rollbackRetryCount=5
+# TM 客户端默认的全局事务超时时间为 60000 毫秒
+client.tm.defaultGlobalTransactionTimeout=60000
+# TM 客户端不启用降级检查
+client.tm.degradeCheck=false
+client.tm.degradeCheckAllowTimes=10
+client.tm.degradeCheckPeriod=2000
+client.tm.interceptorOrder=-2147482648
+client.undo.dataValidation=true
+client.undo.logSerialization=jackson
+client.undo.onlyCareUpdateColumns=true
+# 服务端回滚日志的保存天数为 3 天
+server.undo.logSaveDays=3
+# 服务端回滚日志的删除周期为 86400000 毫秒（即 1 天）
+server.undo.logDeletePeriod=86400000
+# 客户端回滚日志的表名
+client.undo.logTable=undo_log
+client.undo.compress.enable=true
+client.undo.compress.type=zip
+client.undo.compress.threshold=64k
+#For TCC transaction mode
+tcc.fence.logTableName=tcc_fence_log
+tcc.fence.cleanPeriod=1h
+# You can choose from the following options: fastjson, jackson, gson
+tcc.contextJsonParserType=fastjson
+
+#Log rule configuration, for client and server
+log.exceptionRate=100
+
+#Transaction storage configuration, only for the server. The file, db, and redis configuration values are optional.
+store.mode=db
+store.lock.mode=db
+store.session.mode=db
+#Used for password encryption
+store.publicKey=
+
+#These configurations are required if the `store mode` is `db`. If `store.mode,store.lock.mode,store.session.mode` are not equal to `db`, you can remove the configuration block.
+store.db.datasource=druid
+store.db.dbType=mysql
+store.db.driverClassName=com.mysql.cj.jdbc.Driver
+store.db.url=jdbc:mysql://127.0.0.1:3306/db_seata?useUnicode=true&rewriteBatchedStatements=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai 
+store.db.user=root
+store.db.password=123456
+store.db.minConn=5
+store.db.maxConn=30
+store.db.globalTable=global_table
+store.db.branchTable=branch_table
+store.db.distributedLockTable=distributed_lock
+store.db.lockTable=lock_table
+store.db.queryLimit=100
+store.db.maxWait=5000
+
+
+#Transaction rule configuration, only for the server
+# 服务端提交事务的重试周期为 1000 毫秒
+server.recovery.committingRetryPeriod=1000
+# 服务端异步提交事务的重试周期为 1000 毫秒
+server.recovery.asynCommittingRetryPeriod=1000
+# 服务端回滚事务的重试周期为 1000 毫秒
+server.recovery.rollbackingRetryPeriod=1000
+# 服务端处理超时事务的重试周期为 1000 毫秒
+server.recovery.timeoutRetryPeriod=1000
+# 服务端提交事务的最大重试超时时间，-1 表示不限制
+server.maxCommitRetryTimeout=-1
+# 服务端回滚事务的最大重试超时时间，-1 表示不限制
+server.maxRollbackRetryTimeout=-1
+# 服务端回滚重试超时后不解锁
+server.rollbackRetryTimeoutUnlockEnable=false
+# 分布式锁的过期时间为 10000 毫秒
+server.distributedLockExpireTime=10000
+server.session.branchAsyncQueueSize=5000
+server.session.enableBranchAsyncRemove=false
+# 服务端启用并行请求处理
+server.enableParallelRequestHandle=true
+server.enableParallelHandleBranch=false
+server.applicationDataLimit=64000
+# 服务端不启用应用数据限制检查
+server.applicationDataLimitCheck=false
+
+#Metrics configuration, only for the server
+metrics.enabled=false
+metrics.registryType=compact
+metrics.exporterList=prometheus
+metrics.exporterPrometheusPort=9898

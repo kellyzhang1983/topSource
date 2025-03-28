@@ -1,0 +1,101 @@
+server:
+  port: 10001
+spring:
+  application:
+    name: user-gateway
+  main:
+    web-application-type: reactive
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*" #跨域处理 允许所有的域
+            allowedMethods: # 支持的方法
+              - GET
+              - POST
+              - PUT
+              - DELETE
+      routes:
+        - id: user-route
+          uri: lb://user-server
+          predicates:
+            - Path=/api/user/**,/api/point/**
+          filters:
+            - StripPrefix=1
+      default-filters:
+        - name: RequestRateLimiter
+          args:
+            keyResolver: "#{@ipKeyResolver}"
+            #基于令牌每秒钟生成一个，配置的是1秒10个，默认的是每秒生成？个
+            redis-rate-limiter.replenishRate: 10
+            #令牌的大小，总共令牌桶每秒能装多少个？强求。
+            redis-rate-limiter.burstCapacity: 15
+        - name: AddResponseHeader
+          args:
+            name: X-RateLimit-Message
+            value: "SUCESS"
+        - name: CircuitBreaker
+          args:
+            name: usergateway_circuitbreaker
+            fallbackUri: forward:/errorback
+            recordExceptions:
+              # 添加这一行，将 500 异常记录为失败
+              - org.springframework.web.client.HttpServerErrorException.InternalServerError
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 7001
+      password: 123456
+
+eureka:
+  client:
+    service-url:
+      # Eureka 服务器的地址
+      defaultZone: http://127.0.0.1:10011/eureka
+    # 将客户端服务注册到 Eureka 服务器
+    register-with-eureka: true
+    # 从 Eureka 服务器获取服务注册信息
+    fetch-registry: true
+  instance:
+    prefer-ip-address: false # 优先使用 IP 地址进行注册
+    hostname: ${spring.application.name}
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        #表示熔断器会统计最近5次请求，根据这5次请求的成功或失败来计算失败率
+        slidingWindowSize: 5
+        #1次请求后，熔断器才会计算成功失败率
+        minimumNumberOfCalls: 2
+        #表示熔断器半开状态，会允许3次请求去调用被保护的服务，根据这3次请求的结果来决定熔断的下一步状态
+        #1、半开状态是熔断器从打开（Open）状态过渡到关闭（Closed）状态的中间状态。
+        #2、在半开状态下，熔断器会允许一定数量的请求去尝试调用服务，以此来判断服务是否已经恢复正常。
+        #3、如果这些尝试请求中的成功率较高，熔断器会关闭；如果失败率再次超过阈值，熔断器会重新打开。
+        permittedNumberOfCallsInHalfOpenState: 3
+        #表示熔断器打开后会等待3秒，然后再进入半开状态，尝试恢复服务调用
+        #当熔断器打开后，在这段时间内所有对被保护服务的请求都会直接触发降级逻辑，不会实际调用服务。
+        #等待一段时间的目的是给服务足够的时间来恢复，避免在服务还未恢复时就频繁尝试调用，导致熔断器频繁开合。
+        waitDurationInOpenState: 3s
+        #表示当最近 slidingWindowSize 次请求（这里是 10 次）中的失败率达到 30% 时，熔断器会打开。
+        failureRateThreshold: 30
+    instances:
+      #第一个熔断
+      usergateway_circuitbreaker:
+        base-config: default
+  bulkhead:
+    configs:
+      default:
+        #最大并发调用数为 10。它限制了对受舱壁保护的资源的并发访问数量。
+        #例如，当有多个请求同时尝试访问被该舱壁保护的服务时，最多允许 10 个请求同时进行调用，其余请求将被放入队列（如果队列有空间）或者等待。
+        maxConcurrentCalls: 10
+        #最大等待时长为 200 毫秒。当请求因为并发调用数达到上限而无法立即执行时，它们会在队列中等待，等待的最长时间为 200 毫秒。
+        #如果超过这个时间，请求可能会被拒绝或触发其他处理逻辑。
+        maxWaitDuration: 200ms
+        #队列容量为 10。当并发调用数已满时，额外的请求会被放入队列等待处理，这个队列最多可以容纳 10a 个请求。
+        #如果队列已满，再有新的请求到来，可能会直接触发拒绝策略等。
+        #queueCapacity: 10
+    instances:
+      someBulkheadInstance:
+        base-config: default
+#debug: true
