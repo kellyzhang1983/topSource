@@ -1,6 +1,6 @@
 spring:
   application:
-    name: security-center-server
+    name: canal-client
   cloud:
     nacos:
       config:
@@ -9,12 +9,13 @@ spring:
         group: TOPSOURCE_GROUP
         username: nacos
         password: nacos
-        file-extension: yaml
         # 默认已启用
         refresh-enabled: true
   config:
     import:
-      - optional:nacos:security-center-server.yaml
+      - optional:nacos:${spring.application.name}.yaml
+      - optional:nacos:common-canal-properties.yaml
       - optional:nacos:common-redis-properties.yaml
       - optional:nacos:common-nacos-properties.yaml
+
 

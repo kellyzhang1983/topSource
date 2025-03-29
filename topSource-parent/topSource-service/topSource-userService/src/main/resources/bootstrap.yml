@@ -7,13 +7,18 @@ spring:
     nacos:
       config:
         server-addr: 127.0.0.1:8848
-        name: user-server
         namespace: topsource_dev
         group: TOPSOURCE_GROUP
         username: nacos
         password: nacos
         file-extension: yaml
-        extension-configs[0]:
-          data-id: common-properties.yaml
-          group: TOPSOURCE_GROUP
-          refresh: true
+        # 默认已启用
+        refresh-enabled: true
+  config:
+    import:
+      - optional:nacos:${spring.application.name}.yaml
+      - optional:nacos:common-openfegin-properties.yaml
+      - optional:nacos:common-resilience4j-properties.yaml
+      - optional:nacos:common-redis-properties.yaml
+      - optional:nacos:common-nacos-properties.yaml
+      - optional:nacos:common-seata-properties.yaml

@@ -12,7 +12,7 @@ public class CheckMySql {
 
     @Autowired
     private CheckUserData checkUserData;
-    @Scheduled(cron = "0 47 1 * * ?")
+    @Scheduled(cron = "0 17 0 * * ?")
     private void checkMySql(){
         log.info("=====================启动数据库、Redis的检查=======================");
         log.info("1、检查tb_user表与Redis是否一致==========================");
