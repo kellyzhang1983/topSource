@@ -74,7 +74,7 @@ public class AuthorizationSecurityUserFilter extends OncePerRequestFilter {
 
         if(Objects.isNull(user_token)){
             redisTemplate.boundValueOps(SystemConstants.redis_errorSecurity_message).set("用户已退出登录！请重新登录!");
-            throw new RuntimeException();
+            throw new RuntimeException("用户已退出登录！请重新登录!");
         }
 
         Collection<GrantedAuthority> userRole = new ArrayList<GrantedAuthority>();

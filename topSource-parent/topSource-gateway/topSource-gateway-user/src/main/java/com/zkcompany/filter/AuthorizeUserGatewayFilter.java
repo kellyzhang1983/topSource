@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.zkcompany.entity.JwtUtil;
 import com.zkcompany.entity.Result;
+import com.zkcompany.entity.StatusCode;
 import com.zkcompany.entity.SystemConstants;
 import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
@@ -65,6 +66,7 @@ public class AuthorizeUserGatewayFilter implements GlobalFilter, Ordered {
         }
         //5、解析完后把字符串转成JSON格式
         JSONObject token_userJsonObject = JSON.parseObject(sub);
+        //如果是用oauth2server登录，那么需要验证scopes，如果是内部登录，则不需要验证
         List<String> scopes = token_userJsonObject.get("scopes") == null ? new ArrayList<>() : (List<String>) token_userJsonObject.get("scopes");
         if(scopes.size() != 0){
             if(!scopes.contains("app")){

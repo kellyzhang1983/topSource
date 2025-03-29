@@ -39,38 +39,6 @@ public class AuthorizationServerConfig {
     public RegisteredClientRepository registeredClientRepository(JdbcOperations dataSource) {
         //从数据库中读取客户端信息
         return new JdbcRegisteredClientRepository(dataSource);
-
-        /*RegisteredClient registeredClient = RegisteredClient.withId("client_id")
-                //客户端ID
-                .clientId("zk")
-                //客户端秘钥，用BCrypt对密码进行加密
-                .clientSecret(passwordEncoder().encode("123456"))
-                //客户端将使用Basic认证方式
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                //通过授权码、密码的形式进行授权认证
-                //.authorizationGrantTypes(consumer)
-                .authorizationGrantTypes(new Consumer<Set<AuthorizationGrantType>>() {
-                    @Override
-                    public void accept(Set<AuthorizationGrantType> authorizationGrantTypes) {
-                        authorizationGrantTypes.add(AuthorizationGrantType.AUTHORIZATION_CODE);
-                        authorizationGrantTypes.add(AuthorizationGrantType.REFRESH_TOKEN);
-                        authorizationGrantTypes.add(AuthorizationGrantType.CLIENT_CREDENTIALS);
-                    }
-                })
-                //重定向，用户得到授权码后返回的页面
-                .redirectUris(uris -> {
-                    uris.add("http://www.baidu.com");
-                    // 可以添加更多重定向 URI
-                })
-                //设置用户登出后的重定向 URI
-                //.postLogoutRedirectUri("http://www.baidu.com")
-                .tokenSettings(tokenSettings)
-                .scope("app")
-                // 登录成功后对scope进行确认授权
-                //.clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
-                .build();
-        List<RegisteredClient> registeredClientList = new ArrayList<RegisteredClient>();
-        return new InMemoryRegisteredClientRepository(registeredClientList);*/
     }
 
     @Bean
