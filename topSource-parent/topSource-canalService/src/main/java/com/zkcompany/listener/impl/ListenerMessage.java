@@ -1,6 +1,7 @@
 package com.zkcompany.listener.impl;
 
 import com.alibaba.otter.canal.protocol.CanalEntry;
+import com.zkcompany.service.ProcessGoodsData;
 import com.zkcompany.service.ProcessOrderData;
 import com.zkcompany.service.ProcessUserData;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,9 @@ public class ListenerMessage implements com.zkcompany.listener.ListenerMessage {
 
     @Autowired
     private ProcessOrderData processOrderData;
+
+    @Autowired
+    private ProcessGoodsData processGoodsData;
 
     private List<List<CanalEntry.Column>> columnList(CanalEntry.RowChange rowChange,CanalEntry.EventType eventType){
         List<List<CanalEntry.Column>> columnsTatail = new ArrayList<>();
@@ -96,6 +100,12 @@ public class ListenerMessage implements com.zkcompany.listener.ListenerMessage {
                         processUserData.user_deleteRole(List);
                     }
                     break;
+                case "tb_sku":
+                    if (eventType == CanalEntry.EventType.INSERT || eventType == CanalEntry.EventType.UPDATE){
+                        processGoodsData.goods_addOrUpdateEs(List);
+                    }else if (eventType == CanalEntry.EventType.DELETE) {
+                        processGoodsData.goods_deleteEs(List);
+                    }
             }
         }
         if(count != 0) {

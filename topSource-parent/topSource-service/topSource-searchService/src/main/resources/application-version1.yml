@@ -1,0 +1,72 @@
+server:
+  port: 8085
+spring:
+  application:
+    name: search-server
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/db_goods?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC #Asia/Shanghai
+    username: root
+    password: 123456
+  main:
+    allow-bean-definition-overriding: true
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 7001
+      password: 123456
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos
+        port: 8085
+        namespace: topsource_dev
+        group: TOPSOURCE_GROUP
+      config:
+        import-check:
+          enabled: false
+
+elasticsearch:
+  client:
+    host: "127.0.0.1"
+    port: 9200
+    username: "elastic"
+    password: "kelly19831017"
+    certs: "D:/ES_8.17.4/config/certs/http.p12"
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+security:
+  ignored:
+    "/search/keywords,/search/suggest"
+
+
+#eureka:
+#  client:
+#    service-url:
+#      # Eureka 服务器的地址
+#      defaultZone: http://127.0.0.1:10011/eureka
+#    # 将客户端服务注册到 Eureka 服务器
+#    register-with-eureka: true
+#    # 从 Eureka 服务器获取服务注册信息
+#    fetch-registry: true
+#  instance:
+#    prefer-ip-address: true # 优先使用 IP 地址进行注册
+#    #hostname: ${spring.application.name}
+logging:
+  level:
+    root: info
+  file:
+    name: search-server.log
+    path: E:/workSpace/topSource/logs/
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 控制台日志输出格式
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 文件日志输出格式
+  config: classpath:logback-spring.xml
+
+
+

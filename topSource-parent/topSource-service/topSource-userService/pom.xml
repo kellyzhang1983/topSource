@@ -36,6 +36,14 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
+        <!--使用seata开启全局事务-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+            <!--使用seata2.xx版本，需要指定spring-cloud-starter-alibaba-seata的版本号，使用seata-client:2.1.0版本链接TCSERVER-->
+            <version>2023.0.3.2</version>
+        </dependency>
+
     </dependencies>
 
 </project>

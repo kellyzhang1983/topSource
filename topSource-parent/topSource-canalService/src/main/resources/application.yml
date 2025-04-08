@@ -40,3 +40,18 @@ canal:
       password: "admin"
       # 批次大小，每次从 Canal 获取消息的最大数量
       batchSize: 500
+
+elasticsearch:
+  client:
+    host: "127.0.0.1"
+    port: 9200
+    username: "elastic"
+    password: "kelly19831017"
+    certs: "D:/ES_8.17.4/config/certs/http.p12"
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+
+

@@ -1,8 +1,8 @@
 server:
-  port: 10001
+  port: 10003
 spring:
   application:
-    name: user-gateway
+    name: search-gateway
   main:
     web-application-type: reactive
   cloud:
@@ -11,7 +11,7 @@ spring:
         server-addr: 127.0.0.1:8848
         username: nacos
         password: nacos
-        port: 10001
+        port: 10003
         namespace: topsource_dev
         group: TOPSOURCE_GROUP
       config:
@@ -31,10 +31,10 @@ spring:
               - PUT
               - DELETE
       routes:
-        - id: user-route
-          uri: lb://user-server
+        - id: search-route
+          uri: lb://search-server
           predicates:
-            - Path=/api/user/**,/api/point/**
+            - Path=/api/search/**
           filters:
             - StripPrefix=1
       default-filters:
@@ -51,7 +51,7 @@ spring:
 #           value: "SUCESS"
         - name: CircuitBreaker
           args:
-            name: userGateway_circuitbreaker
+            name: searchGateway_circuitbreaker
             fallbackUri: forward:/errorback
             recordExceptions:
              # 添加这一行，将 500 异常记录为失败
@@ -66,8 +66,6 @@ spring:
           args:
             name: userIpAdressratelimiter
             keyResolver: "#{@ipKeyResolver}"
-
-
   data:
     redis:
       host: 127.0.0.1
@@ -112,20 +110,20 @@ resilience4j:
         slowCallRateThreshold: 50
     instances:
       #第一个熔断
-      userGateway_circuitbreaker:
+      searchGateway_circuitbreaker:
         base-config: default
   ratelimiter:
     configs:
       requestCount:
         # 在新的周期内，允许执行的最大请求数
-        limit-for-period: 10
+        limit-for-period: 30
         # 限流器每隔1秒刷新一次，对limit-for-period进行重置，
         limit-refresh-period: 1s
         # 等待的默认时间
         timeout-duration: 1
       requestIp:
         # 在新的周期内，允许执行的最大请求数
-        limit-for-period: 50
+        limit-for-period: 15
         # 限流器每隔1秒刷新一次，对limit-for-period进行重置，
         limit-refresh-period: 1s
         # 等待的默认时间
@@ -141,8 +139,7 @@ resilience4j:
         # 返回超过3S后，会开启融断，如果要调试，建议这里设置成300S来延长响应时间
         timeout-duration: 300s
 
+security:
+  ignored:
+    "/api/search/keywords,/api/search/suggest"
 
-logging:
-  level:
-    io.github.resilience4j: DEBUG
-    org.springframework.cloud.gateway: DEBUG

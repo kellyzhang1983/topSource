@@ -5,9 +5,6 @@ import com.zkcompany.entity.StatusCode;
 import com.zkcompany.pojo.Order;
 import com.zkcompany.pojo.User;
 import com.zkcompany.service.OrderService;
-import io.github.resilience4j.bulkhead.annotation.Bulkhead;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,13 +12,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 @RequestMapping("/order")
 @RestController
-
 public class OrderController {
 
     @Autowired

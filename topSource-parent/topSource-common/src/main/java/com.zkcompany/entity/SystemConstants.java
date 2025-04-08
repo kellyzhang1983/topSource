@@ -26,7 +26,7 @@ public class SystemConstants {
 
     public static final String redis_userToken = "userToken";
 
-
+    public static final String redis_errorSecuritySearchService_message = "redis_errorSecuritySearchService_message";
     public static final String redis_errorSecurityOrderService_message = "redis_errorSecurityOrderService_message";
     public static final String redis_errorSecurityUserService_message = "redis_errorSecurityUserService_message";
     public static final String redis_errorSecurity_message = "redis_errorSecurity_message";

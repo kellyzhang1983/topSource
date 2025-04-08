@@ -12,6 +12,7 @@
     <modules>
         <module>topSource-gateway-order</module>
         <module>topSource-gateway-user</module>
+        <module>topSource-gateway-search</module>
     </modules>
 
     <artifactId>topSource-gateway</artifactId>
