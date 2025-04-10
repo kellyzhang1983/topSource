@@ -8,6 +8,7 @@ import com.zkcompany.entity.SystemConstants;
 import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -21,13 +22,20 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 @Component
 public class AuthorizeOrderGatewayFilter implements GlobalFilter, Ordered {
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Value("${security.ignored}")
+    private String[] ignoredUrls;
+
+    String sub = "";
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -35,6 +43,14 @@ public class AuthorizeOrderGatewayFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         //2.获取响应对象
         ServerHttpResponse response = exchange.getResponse();
+
+        //3.获取路径并判断是否在白名单以内
+        String requestURI = request.getURI().getPath();
+        boolean contains = Arrays.asList(ignoredUrls).contains(requestURI);
+        if(contains){
+            ServerHttpRequest httpRequest = request.mutate().header("reuqest-from-gateway","true").build();
+            return chain.filter(exchange.mutate().request(httpRequest).build());
+        }
 
         //3 从头header中获取令牌数据
         String authorization = request.getHeaders().getFirst("Authorization");
@@ -50,7 +66,6 @@ public class AuthorizeOrderGatewayFilter implements GlobalFilter, Ordered {
         }
 
         //4 利用jwtsUtil工具来识别token
-        String sub = "";
         try {
             //利用jwt工具类，解析token。
             Claims claims = JwtUtil.parseJWT(authorization);
@@ -89,7 +104,15 @@ public class AuthorizeOrderGatewayFilter implements GlobalFilter, Ordered {
             return response.writeWith(Mono.just(response.bufferFactory().wrap(result_jsonString.getBytes())));
         }
         //7、添加头信息 传递给微服务
-        ServerHttpRequest json_token = request.mutate().header("GATWAY_TOKEN", sub).build();
+        //ServerHttpRequest json_token = request.mutate().header("GATWAY_TOKEN", sub).build();
+        Consumer<HttpHeaders> gatway_token = new Consumer<HttpHeaders>() {
+            @Override
+            public void accept(HttpHeaders httpHeaders) {
+                httpHeaders.add("GATWAY_TOKEN", sub);
+                httpHeaders.add("reuqest-from-gateway","true");
+            }
+        };
+        ServerHttpRequest json_token = request.mutate().headers(gatway_token).build();
         return chain.filter(exchange.mutate().request(json_token).build());
     }
 

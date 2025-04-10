@@ -140,7 +140,10 @@ resilience4j:
       default:
         # 返回超过3S后，会开启融断，如果要调试，建议这里设置成300S来延长响应时间
         timeout-duration: 300s
-
+#白名单设置
+security:
+  ignored:
+    ""
 
 logging:
   level:

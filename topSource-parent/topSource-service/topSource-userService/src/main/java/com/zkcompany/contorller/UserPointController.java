@@ -1,6 +1,7 @@
 package com.zkcompany.contorller;
 
 
+import com.zkcompany.entity.BusinessException;
 import com.zkcompany.entity.Result;
 import com.zkcompany.entity.StatusCode;
 import com.zkcompany.pojo.Point;
@@ -30,26 +31,26 @@ public class UserPointController {
     public Result addUserPoint(@RequestBody Map<String,Object> body){
 
         if (body == null || body.isEmpty()){
-            return new Result(false, StatusCode.SC_NOT_FOUND,"请将必要的参数传过来！");
+            throw new BusinessException(StatusCode.SC_NOT_FOUND,"请将必要的参数传过来！");
         }else{
             String user_id = body.get("user_id") == null? "" : body.get("user_id").toString();
             if (StringUtils.isEmpty(user_id)){
-                return new Result(false, StatusCode.SC_NOT_FOUND,"请将user_id参数传过来！");
+                throw new BusinessException(StatusCode.SC_NOT_FOUND,"请将user_id参数传过来！");
             }
 
             String point = body.get("point") == null ? "" : body.get("point").toString();
             if (StringUtils.isEmpty(point)){
-                return new Result(false, StatusCode.SC_NOT_FOUND,"请将point参数传过来！");
+                throw new BusinessException(StatusCode.SC_NOT_FOUND,"请将point参数传过来！");
             }
 
             String change_type = body.get("change_type") == null ? "" : body.get("change_type").toString();
             if (StringUtils.isEmpty(change_type)){
-                return new Result(false, StatusCode.SC_NOT_FOUND,"请将change_type参数传过来！");
+                throw new BusinessException(StatusCode.SC_NOT_FOUND,"请将change_type参数传过来！");
             }
 
             String points_detail = body.get("points_detail") == null ? "" : body.get("points_detail").toString();
             if (StringUtils.isEmpty(points_detail)){
-                return new Result(false, StatusCode.SC_NOT_FOUND,"请将points_detail参数传过来！");
+                throw new BusinessException(StatusCode.SC_NOT_FOUND,"请将points_detail参数传过来！");
             }
         }
 
@@ -84,7 +85,6 @@ public class UserPointController {
     public Result cancelPoint(@RequestParam(value = "user_id") String user_id,
                               @RequestParam(value = "order_id") String order_id){
         int userTotalPoint = userPointService.cancelPonit(user_id, order_id);
-
         if(userTotalPoint == 0){
             return new Result(false, StatusCode.SC_NOT_FOUND,"没找到该用户所对应的积分！......");
         }else {

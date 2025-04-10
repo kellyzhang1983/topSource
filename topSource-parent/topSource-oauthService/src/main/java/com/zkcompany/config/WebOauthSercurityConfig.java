@@ -5,6 +5,7 @@ import com.zkcompany.entity.StatusCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,16 +16,21 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2TokenIntrospectionAuthenticationToken;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.token.DelegatingOAuth2TokenGenerator;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Set;
 
 @Configuration
 public class WebOauthSercurityConfig {
@@ -37,6 +43,9 @@ public class WebOauthSercurityConfig {
 
     @Autowired
     private CustomJwtRefreshTokenGenerator customJwtRefreshTokenGenerator;
+
+    @Autowired
+    private RegisteredClientRepository registeredClientRepository;
 
     //自定义token生产规则，JWT编码以及解码
     @Bean
@@ -118,7 +127,12 @@ public class WebOauthSercurityConfig {
                 )
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(form -> form
+                        /*.failureHandler((request, response, authentication) -> {
+                            SavedRequest savedRequest = requestCache().getRequest(request, response);
+                            response.sendRedirect("/login");
+                        })*/
                         .successHandler((request, response, authentication) -> {
+                            //http://localhost:9099/oauth2/authorize?client_id=huawei&response_type=code&scope=app%20topsource&redirect_uri=http://huawei.com
                             // 自定义重定向逻辑
                             StringBuffer url = new StringBuffer("/oauth2/authorize");
                             // 从 HttpSessionRequestCache缓存中获取原始请求
@@ -132,8 +146,6 @@ public class WebOauthSercurityConfig {
                                 // 如果没有原始请求，重定向到默认页面
                                 response.sendRedirect("/login");
                             }
-
-
                         }));
                 //.formLogin(Customizer.withDefaults());
         return http.build();

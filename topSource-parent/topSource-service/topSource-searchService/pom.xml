@@ -39,6 +39,23 @@
             <artifactId>elasticsearch-rest-client</artifactId>
             <version>8.17.4</version>
         </dependency>
+
+        <!-- 排除 seata 依赖 -->
+        <!-- 排除所有seata相关依赖
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+            <version>2023.0.3.2</version>
+            <exclusions>
+
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>provided</scope>
+        </dependency>
+        -->
     </dependencies>
 
 </project>

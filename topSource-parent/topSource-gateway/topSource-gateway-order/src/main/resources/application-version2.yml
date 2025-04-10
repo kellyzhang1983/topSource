@@ -51,14 +51,14 @@ spring:
 #            value: "SUCESS"
         - name: CircuitBreaker
           args:
-            name: ordergateway_circuitbreaker
+            name: userGateway_circuitbreaker
             fallbackUri: forward:/errorback
             recordExceptions:
               # 添加这一行，将 500 异常记录为失败
               - org.springframework.web.client.HttpServerErrorException.InternalServerError
         - name: RequestCountRateLimiter
           args:
-            name: userServer_ratelimiter
+            name: userTrafficCountratelimiter
         - name: RequestIpRateLimiter
           args:
             name: userIpAdressratelimiter
@@ -108,7 +108,7 @@ resilience4j:
         slowCallRateThreshold: 50
     instances:
       #第一个熔断
-      usergateway_circuitbreaker:
+      userGateway_circuitbreaker:
         base-config: default
   ratelimiter:
     configs:
@@ -129,7 +129,7 @@ resilience4j:
     instances:
       userIpAdressratelimiter:
         base-config: requestIp
-      userServer_ratelimiter:
+      userTrafficCountratelimiter:
         base-config: requestCount
   timelimiter:
     configs:
@@ -137,3 +137,8 @@ resilience4j:
         # 返回超过3S后，会开启融断，如果要调试，建议这里设置成300S来延长返回时间
         timeout-duration: 300s
 #debug: true
+
+#白名单设置
+security:
+  ignored:
+    ""

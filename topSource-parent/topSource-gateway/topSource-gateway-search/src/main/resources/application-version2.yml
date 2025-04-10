@@ -90,24 +90,20 @@ resilience4j:
       default:
         sliding-window-type: COUNT_BASED
         #表示熔断器会统计最近30次请求，根据这30次请求的成功或失败来计算失败率
-        slidingWindowSize: 30
+        slidingWindowSize: 6
         #5次请求后，熔断器才会计算成功失败率
-        minimumNumberOfCalls: 5
+        minimumNumberOfCalls: 1
         #表示熔断器半开状态，会允许3次请求去调用被保护的服务，根据这3次请求的结果来决定熔断的下一步状态
         #1、半开状态是熔断器从打开（Open）状态过渡到关闭（Closed）状态的中间状态。
         #2、在半开状态下，熔断器会允许一定数量的请求去尝试调用服务，以此来判断服务是否已经恢复正常。
         #3、如果这些尝试请求中的成功率较高，熔断器会关闭；如果失败率再次超过阈值，熔断器会重新打开。
-        permittedNumberOfCallsInHalfOpenState: 5
+        permittedNumberOfCallsInHalfOpenState: 3
         #表示熔断器打开后会等待3秒，然后再进入半开状态，尝试恢复服务调用
         #当熔断器打开后，在这段时间内所有对被保护服务的请求都会直接触发降级逻辑，不会实际调用服务。
         #等待一段时间的目的是给服务足够的时间来恢复，避免在服务还未恢复时就频繁尝试调用，导致熔断器频繁开合。
         waitDurationInOpenState: 3s
         #表示当最近 slidingWindowSize 次请求（这里是 10 次）中的失败率达到 30% 时，熔断器会打开。
         failureRateThreshold: 50
-        # 定义慢调用的时间阈值
-        slowCallDurationThreshold: 2s
-        # 定义慢调用的比例阈值
-        slowCallRateThreshold: 50
     instances:
       #第一个熔断
       searchGateway_circuitbreaker:
@@ -137,7 +133,7 @@ resilience4j:
     configs:
       default:
         # 返回超过3S后，会开启融断，如果要调试，建议这里设置成300S来延长响应时间
-        timeout-duration: 300s
+        timeout-duration: 3s
 
 security:
   ignored:

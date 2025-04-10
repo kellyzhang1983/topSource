@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 @Component
 public class AuthorizeSearhGatewayFilter implements GlobalFilter, Ordered {
@@ -34,6 +35,8 @@ public class AuthorizeSearhGatewayFilter implements GlobalFilter, Ordered {
 
     @Value("${security.ignored}")
     private String[] ignoredUrls;
+
+    private String sub = "";
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -45,7 +48,8 @@ public class AuthorizeSearhGatewayFilter implements GlobalFilter, Ordered {
         String requestURI = request.getURI().getPath();
         boolean contains = Arrays.asList(ignoredUrls).contains(requestURI);
         if(contains){
-            return chain.filter(exchange);
+            ServerHttpRequest httpRequest = request.mutate().header("reuqest-from-gateway","true").build();
+            return chain.filter(exchange.mutate().request(httpRequest).build());
         }
 
         ///3 从头header中获取令牌数据
@@ -62,7 +66,6 @@ public class AuthorizeSearhGatewayFilter implements GlobalFilter, Ordered {
         }
 
         //4 利用jwtsUtil工具来识别token
-        String sub = "";
         try {
             //利用jwt工具类，解析token。
             Claims claims = JwtUtil.parseJWT(authorization);
@@ -100,8 +103,17 @@ public class AuthorizeSearhGatewayFilter implements GlobalFilter, Ordered {
             String result_jsonString = JSON.toJSONString(result);
             return response.writeWith(Mono.just(response.bufferFactory().wrap(result_jsonString.getBytes())));
         }
+
         //7、添加头信息 传递给微服务
-        ServerHttpRequest json_token = request.mutate().header("GATWAY_TOKEN", sub).build();
+        //ServerHttpRequest json_token = request.mutate().header("GATWAY_TOKEN", sub).build();
+        Consumer<HttpHeaders> gatway_token = new Consumer<HttpHeaders>() {
+            @Override
+            public void accept(HttpHeaders httpHeaders) {
+                httpHeaders.add("GATWAY_TOKEN", sub);
+                httpHeaders.add("reuqest-from-gateway","true");
+            }
+        };
+        ServerHttpRequest json_token = request.mutate().headers(gatway_token).build();
         return chain.filter(exchange.mutate().request(json_token).build());
     }
 
