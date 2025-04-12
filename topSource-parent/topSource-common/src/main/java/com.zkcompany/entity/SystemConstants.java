@@ -21,6 +21,9 @@ public class SystemConstants {
     public static final String redis_Order = "Order";
     public static final String redis_userOrder_key = "userOrder_";
 
+    public static final String redis_goods = "Goods";
+    public static final String redis_OrderGoods = "Order_Goods";
+
     public static final String redis_userRoleAndPermission = "userRoleAndPermission";
     public static final String redis_userRoleAndPermission_key = "userRoleAndPermission_";
 

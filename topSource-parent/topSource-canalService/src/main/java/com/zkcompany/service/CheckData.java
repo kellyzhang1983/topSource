@@ -1,6 +1,6 @@
 package com.zkcompany.service;
 
-public interface CheckUserData {
+public interface CheckData {
 
     boolean check_tb_user();
 
@@ -11,4 +11,6 @@ public interface CheckUserData {
     boolean check_tb_order();
 
     boolean check_tb_userOrder();
+
+    boolean check_tb_goods();
 }

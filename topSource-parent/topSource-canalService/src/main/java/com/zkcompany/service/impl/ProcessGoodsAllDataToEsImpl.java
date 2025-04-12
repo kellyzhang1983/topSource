@@ -73,8 +73,10 @@ public class ProcessGoodsAllDataToEsImpl implements ProcessGoodsAllDataToEs {
 
                 if(!StringUtils.isEmpty(good.getBrandName())) {
                     //good.setSuggestion(good.getBrandName());
+                    //对品牌名称进行拼音分词
                     AnalyzeRequest analyzeRequest = analyzeKeywordPinyin.searchAnalyzeQuery(good.getBrandName());
                     AnalyzeResponse analyze = elasticsearchClient.indices().analyze(analyzeRequest);
+                    //得到分词的集合，放入suggestion中
                     good.setSuggestion(analyzeKeywordPinyin.searchAnalyzeReuslt(analyze));
                 }
                 if(!StringUtils.isEmpty(good.getSpec())) {

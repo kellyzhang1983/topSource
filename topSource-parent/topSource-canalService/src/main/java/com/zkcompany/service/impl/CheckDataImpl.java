@@ -1,29 +1,21 @@
 package com.zkcompany.service.impl;
 
-import com.zkcompany.dao.UserMapper;
-import com.zkcompany.dao.UserOrderMapper;
-import com.zkcompany.dao.UserPointMapper;
-import com.zkcompany.dao.UserRoleMapper;
+import com.zkcompany.dao.*;
 import com.zkcompany.entity.SystemConstants;
-import com.zkcompany.pojo.Order;
-import com.zkcompany.pojo.Point;
-import com.zkcompany.pojo.User;
-import com.zkcompany.pojo.UserRole;
-import com.zkcompany.service.CheckUserData;
+import com.zkcompany.pojo.*;
+import com.zkcompany.service.CheckData;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 @Slf4j
 @Component
-public class CheckUserDataImpl implements CheckUserData {
+public class CheckDataImpl implements CheckData {
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -37,6 +29,9 @@ public class CheckUserDataImpl implements CheckUserData {
 
     @Autowired
     private UserOrderMapper userOrderMapper;
+
+    @Autowired
+    private GoodsMapper goodsMapper;
 
     @Override
     public boolean check_tb_user() {
@@ -194,6 +189,27 @@ public class CheckUserDataImpl implements CheckUserData {
         }
 
         if(count != 0) {
+            log.info("开始同步到Redis中........共同步了：" + count + "条数据！");
+        }
+        return sync;
+    }
+
+
+    @Override
+    public boolean check_tb_goods(){
+        log.info("检查db_goods库（tb_sku表开始）........");
+        Set keys = redisTemplate.boundHashOps(SystemConstants.redis_goods).keys();
+        List<Goods> goodsList = goodsMapper.selectAllGoods();
+        boolean sync = true;
+        if(keys.size() != goodsList.size()){
+            log.info("开始同步到Redis中........");
+            redisTemplate.delete(SystemConstants.redis_goods);
+            int count = 0;
+            for(Goods good : goodsList){
+                redisTemplate.boundHashOps(SystemConstants.redis_goods).put(good.getId(),good);
+                count ++;
+            }
+            sync = false;
             log.info("开始同步到Redis中........共同步了：" + count + "条数据！");
         }
         return sync;

@@ -6,11 +6,13 @@ import co.elastic.clients.elasticsearch.core.IndexRequest;
 import co.elastic.clients.elasticsearch.indices.AnalyzeRequest;
 import co.elastic.clients.elasticsearch.indices.AnalyzeResponse;
 import com.alibaba.otter.canal.protocol.CanalEntry;
+import com.zkcompany.entity.SystemConstants;
 import com.zkcompany.pojo.Goods;
 import com.zkcompany.service.ProcessGoodsData;
 import com.zkcompany.uitl.ConvertObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -25,6 +27,9 @@ public class SynGoodsData implements ProcessGoodsData {
     @Autowired
     private AnalyzeKeywordPinyin analyzeKeywordPinyin;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     @Override
     public void goods_addOrUpdateEs(List<CanalEntry.Column> columns) {
         Goods goods = new Goods();
@@ -37,8 +42,15 @@ public class SynGoodsData implements ProcessGoodsData {
             ConvertObject.convertGoods(goods,name,value);
         }
         try {
+            redisTemplate.boundHashOps(SystemConstants.redis_goods).put(goods.getId(),goods);
+        } catch (Exception e) {
+            System.err.println("Redis operation redis_userOrder failed: " + e.getMessage());
+        }
+        try {
+            //对品牌名称进行拼音分词
             AnalyzeRequest analyzeRequest = analyzeKeywordPinyin.searchAnalyzeQuery(goods.getBrandName());
             AnalyzeResponse analyze = elasticsearchClient.indices().analyze(analyzeRequest);
+            //得到分词的集合，放入suggestion中
             goods.setSuggestion(analyzeKeywordPinyin.searchAnalyzeReuslt(analyze));
 
             IndexRequest<Goods> request = new IndexRequest.Builder<Goods>()
@@ -64,6 +76,11 @@ public class SynGoodsData implements ProcessGoodsData {
                     id = column.getValue();
                     break;
             }
+        }
+        try {
+            redisTemplate.boundHashOps(SystemConstants.redis_goods).delete(id);
+        } catch (Exception e) {
+            System.err.println("Redis operation redis_userOrder failed: " + e.getMessage());
         }
         try {
             DeleteRequest request = new DeleteRequest.Builder()
