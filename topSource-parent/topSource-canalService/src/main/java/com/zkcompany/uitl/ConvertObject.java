@@ -72,13 +72,13 @@ public class ConvertObject {
                 point.setId(value);
                 break;
             case "points_change":
-                point.setPoints_change(Integer.valueOf(value));
+                point.setPointsChange(Integer.valueOf(value));
                 break;
             case "change_type":
-                point.setChange_type(Integer.valueOf(value));
+                point.setChangeType(Integer.valueOf(value));
                 break;
             case "change_time":
-                point.setChange_time(DateUtil.formatStr(value,DateUtil.PATTERN_YYYY_MM_DDHHMMSS));
+                point.setChangeTime(DateUtil.formatStr(value,DateUtil.PATTERN_YYYY_MM_DDHHMMSS));
         }
     }
 
@@ -88,16 +88,16 @@ public class ConvertObject {
                 order.setId(value);
                 break;
             case "user_id":
-                order.setUser_id(value);
+                order.setUserId(value);
                 break;
             case "order_money":
-                order.setOrder_money(new BigDecimal(value));
+                order.setOrderMoney(new BigDecimal(value));
                 break;
             case "order_date" :
-                order.setOrder_date(DateUtil.formatStr(value,DateUtil.PATTERN_YYYY_MM_DDHHMMSS));
+                order.setOrderDate(DateUtil.formatStr(value,DateUtil.PATTERN_YYYY_MM_DDHHMMSS));
                 break;
             case "order_state" :
-                order.setOrder_state(value);
+                order.setOrderState(value);
                 break;
         }
     }

@@ -9,6 +9,7 @@ import com.zkcompany.pojo.User;
 import com.zkcompany.pojo.UserRole;
 import com.zkcompany.service.ProcessUserData;
 import com.zkcompany.uitl.ConvertObject;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Component
+@Slf4j
 public class SynUserData implements ProcessUserData {
 
     @Autowired
@@ -46,7 +48,7 @@ public class SynUserData implements ProcessUserData {
             redisTemplate.boundHashOps(SystemConstants.redis_userInfo).put(user.getId(),user);
         } catch (Exception e) {
             // 处理异常，例如记录日志或采取其他措施
-            System.err.println("Redis operation addOrUpdateRedis  failed: " + e.getMessage());
+            log.error("Redis operation user_addOrUpdateRedis  failed: " + e.getMessage());
         }
     }
 
@@ -65,7 +67,7 @@ public class SynUserData implements ProcessUserData {
             redisTemplate.boundHashOps(SystemConstants.redis_userRoleAndPermission).delete(id);
         } catch (Exception e) {
             // 处理异常，例如记录日志或采取其他措施
-            System.err.println("Redis operation deleteRedis failed: " + e.getMessage());
+            log.error("Redis operation user_deleteRedis failed: " + e.getMessage());
         }
     }
 
@@ -93,7 +95,7 @@ public class SynUserData implements ProcessUserData {
                         count = count + 1 ;
                     } catch (Exception e) {
                         // 处理异常，例如记录日志或采取其他措施
-                        System.err.println("Redis operation redis_userPoint failed: " + e.getMessage());
+                        log.error("Redis operation point_addOrUpdateRedis failed: " + e.getMessage());
                     }
                     break;
                 }
@@ -132,7 +134,7 @@ public class SynUserData implements ProcessUserData {
                         count = count + 1 ;
                     } catch (Exception e) {
                         // 处理异常，例如记录日志或采取其他措施
-                        System.err.println("Redis operation redis_userPoint failed: " + e.getMessage());
+                        log.error("Redis operation point_deleteRedis failed: " + e.getMessage());
                     }
                     break;
                 }
@@ -156,14 +158,14 @@ public class SynUserData implements ProcessUserData {
                     try {
                         for(UserRole userRoleObject : userRoleList){
                             //角色前面加上前缀ROLE_,区分角色和权限
-                                String role_name = "ROLE_" + userRoleObject.getRole_name();
+                                String role_name = "ROLE_" + userRoleObject.getRoleName();
                         roleList.add(role_name);
                     }
                     //放入Redis中，数据格式为Map<user_id,List<String>>
                     redisTemplate.boundHashOps(SystemConstants.redis_userRoleAndPermission).put(column.getValue(),roleList);
                     } catch (Exception e) {
                         // 处理异常，例如记录日志或采取其他措施
-                        System.err.println("Redis operation redis_userPoint failed: " + e.getMessage());
+                        log.error("Redis operation user_addRole failed: " + e.getMessage());
                     }
                     break;
                 }

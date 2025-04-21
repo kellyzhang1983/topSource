@@ -34,13 +34,13 @@ public class UserPointServiceImpl  implements UserPointService {
         //创建一个用户积分对象
         Point user_ponit = new Point();
         long nextId = idCreate.nextId();
-        user_ponit.setUser_id(body.get("user_id").toString());
+        user_ponit.setUserId(body.get("user_id").toString());
         user_ponit.setId(String.valueOf(nextId));
-        user_ponit.setPoints_change(Integer.valueOf(body.get("point").toString()));
+        user_ponit.setPointsChange(Integer.valueOf(body.get("point").toString()));
         //user_ponit.setChange_type((int) (Math.random() * 3) + 1);
-        user_ponit.setChange_type(Integer.valueOf(body.get("change_type").toString()));
-        user_ponit.setPoints_detail(body.get("points_detail").toString());
-        user_ponit.setChange_time(WorldTime.chinese_time(new Date()));
+        user_ponit.setChangeType(Integer.valueOf(body.get("change_type").toString()));
+        user_ponit.setPointsDetail(body.get("points_detail").toString());
+        user_ponit.setChangeTime(WorldTime.chinese_time(new Date()));
         //使用mapper将用户积分对象的值插入数据库中
         userPointMapper.insertSelective(user_ponit);
     }
@@ -84,12 +84,12 @@ public class UserPointServiceImpl  implements UserPointService {
             if (userTotalPoint == null || "".equals(userTotalPoint)){
                 return totalPoint;
             }else{
-                return userTotalPoint.getPoints_change();
+                return userTotalPoint.getPointsChange();
             }
         }else {
             //从Redis中把积分取出来，循环添加积分，得到用户总积分
             for(Point P : pointList){
-                totalPoint = totalPoint + P.getPoints_change();
+                totalPoint = totalPoint + P.getPointsChange();
             }
             return  totalPoint;
         }

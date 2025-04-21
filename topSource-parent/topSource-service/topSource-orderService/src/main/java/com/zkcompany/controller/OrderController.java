@@ -40,7 +40,7 @@ public class OrderController {
         try {
             Order order = new Order();
             order.setId(order_id);
-            order.setUser_id(getUserid());
+            order.setUserId(getUserid());
             i = orderService.paySatus(order);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -106,7 +106,7 @@ public class OrderController {
         if(Objects.isNull(order)){
             return  new Result(true, StatusCode.SC_OK,"正在抢单中......请稍后查看订单信息！");
         }else {
-            switch (order.getOrder_state()){
+            switch (order.getOrderState()){
                 case "1":
                     return new Result(true, StatusCode.SC_OK, "抢单成功，请查看具体订单信息，请尽快支付！", order);
                 case "2":

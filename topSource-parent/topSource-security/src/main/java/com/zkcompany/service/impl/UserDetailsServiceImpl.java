@@ -114,13 +114,13 @@ public class UserDetailsServiceImpl implements UserAuthenticaitonService {
         String passwordEncode = passwordEncoder.encode(user.getPassword());
         Result result = userCenterFegin.addUser(user.getUsername(), passwordEncode);
         //为新添加的用户增加user权限。
-        if(result.getCode() == 20000){
+        if(result.isFlag()){
             String role_id = userRoleMapper.selectRoleID("user");
             UserRole userRole = new UserRole();
             userRole.setId(String.valueOf(idWorker.nextId()));
             User userByName = userMapper.selectByUsername(user.getUsername());
-            userRole.setUser_id(userByName.getId());
-            userRole.setRole_id(role_id);
+            userRole.setUserId(userByName.getId());
+            userRole.setRoleId(role_id);
             userRole.setCreated(WorldTime.chinese_time(new Date()));
             userRoleMapper.insertSelective(userRole);
         }

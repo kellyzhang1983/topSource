@@ -111,7 +111,7 @@ public class OrderCreateTask {
         idCreate = new IdWorker();
         Order order = new Order();
         order.setId(String.valueOf(idCreate.nextId()));
-        order.setUser_id(user_id);
+        order.setUserId(user_id);
         // 定义订单金额的最小值和最大值
         BigDecimal min = new BigDecimal("10");
         BigDecimal max = new BigDecimal("500");
@@ -120,16 +120,16 @@ public class OrderCreateTask {
 
         // 生成随机金额
         BigDecimal randomAmount = generateRandomAmount(min, max);
-        order.setOrder_money(randomAmount);
-        order.setOrder_state("1");
-        order.setOrder_date(WorldTime.chinese_time(new Date()));
+        order.setOrderMoney(randomAmount);
+        order.setOrderState("1");
+        order.setOrderDate(WorldTime.chinese_time(new Date()));
 
         return order;
     }
 
     private Map<String,Object> create_point(Order order){
         Map<String,Object> body = new HashMap<String,Object>();
-        body.put("user_id",order.getUser_id());
+        body.put("user_id",order.getUserId());
         body.put("change_type",3);
         body.put("points_detail",order.getId());
         body.put("point",200);

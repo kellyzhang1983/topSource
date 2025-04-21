@@ -41,7 +41,7 @@ public class OrderProcessListener implements RocketMQListener<Order>{
         try {
 
             log.info("===========================================监听数据:<" + message.getId() + ">===============================================");
-            requestAuth(message.getUser_id());
+            requestAuth(message.getUserId());
             orderService.cretaOrder(message);
             log.info("===========================================数据处理完成：<" + message.getId() + ">===============================================");
         } catch (Exception e) {

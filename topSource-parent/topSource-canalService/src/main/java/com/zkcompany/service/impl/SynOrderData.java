@@ -48,7 +48,7 @@ public class SynOrderData implements ProcessOrderData {
                             count = count + 1 ;
                         } catch (Exception e) {
                             // 处理异常，例如记录日志或采取其他措施
-                            System.err.println("Redis operation redis_userOrder failed: " + e.getMessage());
+                            log.error("Redis operation order_addOrUpdateRedis failed: " + e.getMessage());
                         }
                     }
 
@@ -63,7 +63,7 @@ public class SynOrderData implements ProcessOrderData {
             redisTemplate.boundHashOps(SystemConstants.redis_Order).put(order.getId(),order);
         } catch (Exception e) {
             // 处理异常，例如记录日志或采取其他措施
-            System.err.println("Redis operation redis_userOrder failed: " + e.getMessage());
+            log.error("Redis operation order_addOrUpdateRedis failed: " + e.getMessage());
         }
         return count;
 
@@ -83,29 +83,7 @@ public class SynOrderData implements ProcessOrderData {
             redisTemplate.boundHashOps(SystemConstants.redis_Order).delete(id);
         } catch (Exception e) {
             // 处理异常，例如记录日志或采取其他措施
-            System.err.println("Redis operation deleteRedis failed: " + e.getMessage());
+            log.error("Redis operation order_deleteRedis failed: " + e.getMessage());
         }
     }
-
-   /* @Scheduled(cron = "0/2 * * * * ?")
-    public  void update_sql(){
-        if(index == 0 ){
-            orderList = userOrderMapper.selectAll();
-        }
-        log.info("总共有：" + (orderList.size() -1) + "个，已执行完成：" + index + "个");
-        Order order = orderList.get(index);
-        userOrderMapper.change_money(order.getId());
-
-        index++;
-
-        if(orderList.size() -1 == index){
-            try {
-                Thread.sleep(1*24*60*60*1000);
-                log.info("休眠中，不要打扰我.......");
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-    }*/
 }

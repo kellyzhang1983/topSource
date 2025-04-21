@@ -68,25 +68,25 @@ public class OrderServiceImpl implements OrderService, UserDetailsService {
         Example example = new Example(Order.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("id",order.getId());
-        criteria.andEqualTo("user_id",order.getUser_id());
+        criteria.andEqualTo("user_id",order.getUserId());
         Order order_user = orderMapper.selectOneByExample(example);
         //首先判断有没有订单记录，如果没有返回0；
         if(Objects.isNull(order_user)){
             return 0;
         }
 
-        switch (order_user.getOrder_state()){
+        switch (order_user.getOrderState()){
             case "2": //如果订单状态等于2，那么直接返回2供前端做判断
                 return 2;
             case "3": //如果订单状态等于3，那么直接返回3供前端做判断
                 return 3;
             default:
                 //如果订单状态等于1，那么直接将订单状态改变成2，并增加500积分
-                order_user.setOrder_state("2");
+                order_user.setOrderState("2");
                 orderMapper.updateByPrimaryKeySelective(order_user);
 
                 Map<String,Object> body = new HashMap<String,Object>();
-                body.put("user_id",order_user.getUser_id());
+                body.put("user_id",order_user.getUserId());
                 body.put("change_type",1);
                 body.put("points_detail",order_user.getId());
                 body.put("point",500);
@@ -107,13 +107,13 @@ public class OrderServiceImpl implements OrderService, UserDetailsService {
         Order order_his = orderMapper.selectByPrimaryKey(order);
         if(order_his == null) {
             return 0;
-        }else if(order_his.getOrder_state().equals("2")){
+        }else if(order_his.getOrderState().equals("2")){
             return 1;
         }else {
-            order.setOrder_state("3");
+            order.setOrderState("3");
             int i = orderMapper.updateByPrimaryKeySelective(order);
             if(i > 0){
-                Result result = userCenterFegin.cancelPoint(order.getUser_id(),order.getId());
+                Result result = userCenterFegin.cancelPoint(order.getUserId(),order.getId());
                 if(!result.isFlag()){
                     log.info("调用userCenter接口失败！请查看详细原因：" + result.getMessage());
                     throw new RuntimeException("调用userCenter接口失败！请查看详细原因：" );
@@ -163,7 +163,7 @@ public class OrderServiceImpl implements OrderService, UserDetailsService {
 
     private Map<String,Object> create_point(Order order){
         Map<String,Object> body = new HashMap<String,Object>();
-        body.put("user_id",order.getUser_id());
+        body.put("user_id",order.getUserId());
         body.put("change_type",3);
         body.put("points_detail",order.getId());
         body.put("point",200);
@@ -173,16 +173,16 @@ public class OrderServiceImpl implements OrderService, UserDetailsService {
     private Order createOrder(String user_id){
         Order order = new Order();
         order.setId(String.valueOf(idCreate.nextId()));
-        order.setUser_id(user_id);
+        order.setUserId(user_id);
         // 定义订单金额的最小值和最大值
         BigDecimal min = new BigDecimal("10");
         BigDecimal max = new BigDecimal("500");
 
         // 生成随机金额
         BigDecimal randomAmount = generateRandomAmount(min, max);
-        order.setOrder_money(randomAmount);
-        order.setOrder_state("1");
-        order.setOrder_date(WorldTime.chinese_time(new Date()));
+        order.setOrderMoney(randomAmount);
+        order.setOrderState("1");
+        order.setOrderDate(WorldTime.chinese_time(new Date()));
 
         //自动生成订单，需要获取一个用户认证和权限，系统内置一个认证用户（system_user）和权限(所有权限)
 

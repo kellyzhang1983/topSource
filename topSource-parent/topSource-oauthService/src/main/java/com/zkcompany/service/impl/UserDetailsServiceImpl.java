@@ -48,9 +48,6 @@ public class UserDetailsServiceImpl implements UserAuthenticaitonService {
     @Lazy
     private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
 
     @Override
     public String loginUser(String username, String password) {

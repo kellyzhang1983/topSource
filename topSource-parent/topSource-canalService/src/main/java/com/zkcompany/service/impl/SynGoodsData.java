@@ -19,7 +19,6 @@ import java.util.List;
 
 @Component
 @Slf4j
-
 public class SynGoodsData implements ProcessGoodsData {
     @Autowired
     private ElasticsearchClient elasticsearchClient;
@@ -44,7 +43,7 @@ public class SynGoodsData implements ProcessGoodsData {
         try {
             redisTemplate.boundHashOps(SystemConstants.redis_goods).put(goods.getId(),goods);
         } catch (Exception e) {
-            System.err.println("Redis operation redis_userOrder failed: " + e.getMessage());
+            log.error("Redis operation goods_addOrUpdateEs failed: " + e.getMessage());
         }
         try {
             //对品牌名称进行拼音分词
@@ -61,8 +60,7 @@ public class SynGoodsData implements ProcessGoodsData {
             elasticsearchClient.index(request);
         } catch (Exception e) {
             // 处理异常，例如记录日志或采取其他措施
-            e.printStackTrace();
-            System.err.println("ES operation addOrUpdateES  failed: " + e.getMessage() );
+            log.error("ES operation goods_addOrUpdateEs  failed: " + e.getMessage() );
         }
     }
 
@@ -80,7 +78,7 @@ public class SynGoodsData implements ProcessGoodsData {
         try {
             redisTemplate.boundHashOps(SystemConstants.redis_goods).delete(id);
         } catch (Exception e) {
-            System.err.println("Redis operation redis_userOrder failed: " + e.getMessage());
+            log.error("Redis operation goods_deleteEs failed: " + e.getMessage());
         }
         try {
             DeleteRequest request = new DeleteRequest.Builder()
@@ -90,7 +88,7 @@ public class SynGoodsData implements ProcessGoodsData {
             elasticsearchClient.delete(request);
         } catch (Exception e) {
             // 处理异常，例如记录日志或采取其他措施
-            System.err.println("ES operation addOrUpdateES  failed: " + e.getMessage());
+            log.error("ES operation goods_deleteEs  failed: " + e.getMessage());
         }
     }
 }

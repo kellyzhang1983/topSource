@@ -66,6 +66,12 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
+        <!-- 将日志格式化为 JSON（便于 Elasticsearch 解析） -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>8.1</version>
+        </dependency>
         <!--引入JSON包-->
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>

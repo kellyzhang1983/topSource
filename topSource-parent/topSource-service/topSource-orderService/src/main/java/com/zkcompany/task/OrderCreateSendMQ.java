@@ -124,16 +124,16 @@ public class OrderCreateSendMQ {
     private Order createOrder(String user_id){
         Order order = new Order();
         order.setId(String.valueOf(idCreate.nextId()));
-        order.setUser_id(user_id);
+        order.setUserId(user_id);
         // 定义订单金额的最小值和最大值
         BigDecimal min = new BigDecimal("10");
         BigDecimal max = new BigDecimal("500");
 
         // 生成随机金额
         BigDecimal randomAmount = generateRandomAmount(min, max);
-        order.setOrder_money(randomAmount);
-        order.setOrder_state("1");
-        order.setOrder_date(WorldTime.chinese_time(new Date()));
+        order.setOrderMoney(randomAmount);
+        order.setOrderState("1");
+        order.setOrderDate(WorldTime.chinese_time(new Date()));
 
         //自动生成订单，需要获取一个用户认证和权限，系统内置一个认证用户（system_user）和权限(所有权限)
 

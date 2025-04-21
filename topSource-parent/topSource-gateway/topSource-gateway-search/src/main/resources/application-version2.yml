@@ -139,3 +139,14 @@ security:
   ignored:
     "/api/search/keywords,/api/search/suggest"
 
+
+logging:
+  level:
+    root: info
+  file:
+    name: search-gateway-server.log
+    path: E:/workSpace/topSource/logs/searchgateway
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 控制台日志输出格式
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 文件日志输出格式
+  config: classpath:logback-spring.xml

@@ -158,6 +158,10 @@ resilience4j:
       default:
         timeout-duration: 10s
 
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
 #白名单设置
 security:
   ignored:

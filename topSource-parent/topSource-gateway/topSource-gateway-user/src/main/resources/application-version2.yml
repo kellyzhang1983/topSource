@@ -147,5 +147,11 @@ security:
 
 logging:
   level:
-    io.github.resilience4j: DEBUG
-    org.springframework.cloud.gateway: DEBUG
+    root: info
+  file:
+    name: user-gateway-server.log
+    path: E:/workSpace/topSource/logs/usergateway
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 控制台日志输出格式
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 文件日志输出格式
+  config: classpath:logback-spring.xml

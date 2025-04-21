@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -39,6 +40,9 @@ import java.util.Objects;
 @Slf4j
 public class WebSecurityConfig{
 
+    @Value("${security.ignored}")
+    private String[] ignoredUrls;
+
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -56,7 +60,7 @@ public class WebSecurityConfig{
                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         )
         .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/userAuthentication/login").permitAll()
+                .requestMatchers(ignoredUrls).permitAll()
                //其余任何请求都要经过认证。
                .anyRequest()
                .authenticated());

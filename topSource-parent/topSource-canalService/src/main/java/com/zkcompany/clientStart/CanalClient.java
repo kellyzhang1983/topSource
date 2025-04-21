@@ -4,6 +4,8 @@ import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.CanalConnectors;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
+import com.zkcompany.entity.BusinessException;
+import com.zkcompany.entity.StatusCode;
 import com.zkcompany.listener.impl.ListenerMessage;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -79,7 +81,7 @@ public class CanalClient {
                             log.info("当前线程休眠3秒钟：" +Thread.currentThread().getName());
                             Thread.sleep(3000);
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            log.error(e.getMessage());
                         }
                     } else {
                         // 处理消息
@@ -90,6 +92,7 @@ public class CanalClient {
                     }
                 }
             } catch (Exception e) {
+                log.error(e.getMessage() + "【canalServiceError:CanalClient】CanalClient.start()初始化连接canal失败！");
                 e.printStackTrace();
             }
         });
@@ -110,7 +113,7 @@ public class CanalClient {
                     //同步后续数据进行处理
                     listenerMessage.processData(tableName,rowChange,eventType);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage() + "【canalServiceError:CanalClient】CanalClient.processMessage()解析ROW级数据失败！");
                 }
             }
         }

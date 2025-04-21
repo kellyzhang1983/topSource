@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,23 +33,26 @@ public class AuthorizationSecurityUserFilter extends OncePerRequestFilter {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @Value("${security.ignored}")
+    private String[] ignoredUrls;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //从request的请求当中获取token。
         String authorization = request.getHeader("Authorization");
         //获户端的url地址。
         String contextPath = request.getRequestURI();
+        boolean contains = Arrays.asList(ignoredUrls).contains(contextPath);
 
         //log.info("contextPath:" + contextPath);
         if(StringUtils.isEmpty(authorization)){
-            filterChain.doFilter(request,response);
             //如果客户端的地址是 Login,那么过滤器放行
-            if(contextPath.equals("/userAuthentication/login")){
+            if(contains){
                 filterChain.doFilter(request,response);
             }else{
                 //如果地址不是login，那么返回给客户端错误信息。
-                redisTemplate.boundValueOps(SystemConstants.redis_errorSecurity_message).set("请先登录！把需要的token信息传入过来！");
-                throw new RuntimeException("请先登录！把需要的token信息传入过来！") ;
+                redisTemplate.boundValueOps(SystemConstants.redis_errorSecurity_message).set("请先登录！请带入token信息！");
+                throw new RuntimeException("请先登录！请带入token信息！") ;
             }
             return;
         }

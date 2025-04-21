@@ -71,14 +71,14 @@ public class CheckDataImpl implements CheckData {
         }
         count = 0;
         for(Point point : pointList){
-            List<Point> points_mysql = userPointMapper.searchUserPoint(point.getUser_id());
-            List<Point> points_redis = (List<Point>)redisTemplate.boundHashOps(SystemConstants.redis_userPoint).get(point.getUser_id());
+            List<Point> points_mysql = userPointMapper.searchUserPoint(point.getUserId());
+            List<Point> points_redis = (List<Point>)redisTemplate.boundHashOps(SystemConstants.redis_userPoint).get(point.getUserId());
             if(points_mysql.size() != (points_redis == null ? 0 : points_redis.size())){
                 if(count == 0){
                     log.info("开始同步到Redis中........");
                     sync = false;
                 }
-                redisTemplate.boundHashOps(SystemConstants.redis_userPoint).put(point.getUser_id(), points_mysql);
+                redisTemplate.boundHashOps(SystemConstants.redis_userPoint).put(point.getUserId(), points_mysql);
                 count ++;
 
             }
@@ -111,18 +111,18 @@ public class CheckDataImpl implements CheckData {
         count = 0;
         for(UserRole userRole : userRoleList){
             List<String> userRoles = new ArrayList<String>();
-            List<UserRole> userRoles_mysql = userRoleMapper.selectRole(userRole.getUser_id());
-            List<String> userRoles_redis = (List<String>)redisTemplate.boundHashOps(SystemConstants.redis_userRoleAndPermission).get(userRole.getUser_id());
+            List<UserRole> userRoles_mysql = userRoleMapper.selectRole(userRole.getUserId());
+            List<String> userRoles_redis = (List<String>)redisTemplate.boundHashOps(SystemConstants.redis_userRoleAndPermission).get(userRole.getUserId());
             if(userRoles_mysql.size() != (userRoles_redis == null ? 0 : userRoles_redis.size())){
                 if(count == 0){
                     log.info("开始同步到Redis中........");
                     sync = false;
                 }
                 for(UserRole userRole_mysql : userRoles_mysql){
-                    String userRoleString = "ROLE_" + userRole_mysql.getRole_name();
+                    String userRoleString = "ROLE_" + userRole_mysql.getRoleName();
                     userRoles.add(userRoleString);
                 }
-                redisTemplate.boundHashOps(SystemConstants.redis_userRoleAndPermission).put(userRole.getUser_id(), userRoles);
+                redisTemplate.boundHashOps(SystemConstants.redis_userRoleAndPermission).put(userRole.getUserId(), userRoles);
                 count ++;
 
             }
@@ -174,14 +174,14 @@ public class CheckDataImpl implements CheckData {
         }
         count = 0;
         for(Order order : orderList){
-            List<Order> userOrder_mysql = userOrderMapper.searchUserOrder(order.getUser_id());
-            List<Order> userOrder_redis = (List<Order>)redisTemplate.boundHashOps(SystemConstants.redis_userOrder).get(order.getUser_id());
+            List<Order> userOrder_mysql = userOrderMapper.searchUserOrder(order.getUserId());
+            List<Order> userOrder_redis = (List<Order>)redisTemplate.boundHashOps(SystemConstants.redis_userOrder).get(order.getUserId());
             if(userOrder_mysql.size() != (userOrder_redis == null ? 0 : userOrder_redis.size())){
                 if(count == 0){
                     log.info("开始同步到Redis中........");
                     sync = false;
                 }
-                redisTemplate.boundHashOps(SystemConstants.redis_userOrder).put(order.getUser_id(), userOrder_mysql);
+                redisTemplate.boundHashOps(SystemConstants.redis_userOrder).put(order.getUserId(), userOrder_mysql);
                 count ++;
 
             }

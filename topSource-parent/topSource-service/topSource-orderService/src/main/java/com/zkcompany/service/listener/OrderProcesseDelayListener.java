@@ -36,7 +36,7 @@ public class OrderProcesseDelayListener implements RocketMQListener<Order> {
     public void onMessage(Order message) {
         try {
             log.info("===========================================监听延时（delay）数据:<" + message.getId() + ">===============================================");
-            requestAuth(message.getUser_id());
+            requestAuth(message.getUserId());
             orderService.cancelOrder(message);
             log.info("===========================================延时（delay）数据处理完成：<" + message.getId() + ">===============================================");
         } catch (Exception e) {

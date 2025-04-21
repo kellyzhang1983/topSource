@@ -54,4 +54,15 @@ mybatis:
     map-underscore-to-camel-case: true
 
 
+logging:
+  level:
+    root: info
+  file:
+    name: canal-server.log
+    path: E:/workSpace/topSource/logs/canalservice
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 控制台日志输出格式
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 文件日志输出格式
+  config: classpath:logback-spring.xml
+
 

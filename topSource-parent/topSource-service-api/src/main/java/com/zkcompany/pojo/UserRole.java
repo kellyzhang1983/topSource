@@ -19,17 +19,17 @@ public class UserRole implements Serializable {
     private String id;
 
     @Column(name = "user_id")
-    private String user_id;
+    private String userId;
 
     @Column(name = "role_id")
-    private String role_id;
+    private String roleId;
 
     @Column(name = "created")
     private Date created;
 
     @Transient
-    private String role_name;
+    private String roleName;
 
     @Transient
-    private String permission_name;
+    private String permissionName;
 }

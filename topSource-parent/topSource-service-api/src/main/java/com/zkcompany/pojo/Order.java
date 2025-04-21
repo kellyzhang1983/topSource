@@ -19,16 +19,16 @@ public class Order implements Serializable {
     private String id;
 
     @Column(name = "user_id")
-    private String user_id;
+    private String userId;
 
     @Column(name = "order_date")
-    private Date order_date;
+    private Date orderDate;
 
     @Column(name = "order_money")
-    private BigDecimal order_money;
+    private BigDecimal orderMoney;
 
     @Column(name = "order_state")
-    private String order_state;
+    private String orderState;
 
    /* public void setUser_id(String user_id) {
     }
