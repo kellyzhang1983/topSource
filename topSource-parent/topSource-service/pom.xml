@@ -13,6 +13,7 @@
         <module>topSource-userService</module>
         <module>topSource-orderService</module>
         <module>topSource-searchService</module>
+        <module>topSource-goodsService</module>
     </modules>
 
     <artifactId>topSource-service</artifactId>

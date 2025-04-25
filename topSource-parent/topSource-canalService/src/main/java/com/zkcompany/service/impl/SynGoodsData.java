@@ -10,11 +10,18 @@ import com.zkcompany.entity.SystemConstants;
 import com.zkcompany.pojo.Goods;
 import com.zkcompany.service.ProcessGoodsData;
 import com.zkcompany.uitl.ConvertObject;
+import io.minio.MinioClient;
+import io.minio.RemoveObjectArgs;
+import io.minio.errors.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @Component
@@ -28,6 +35,9 @@ public class SynGoodsData implements ProcessGoodsData {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private MinioClient minioClient;
 
     @Override
     public void goods_addOrUpdateEs(List<CanalEntry.Column> columns) {
@@ -73,6 +83,24 @@ public class SynGoodsData implements ProcessGoodsData {
                 case "id":
                     id = column.getValue();
                     break;
+            }
+        }
+
+        Goods goods = (Goods)redisTemplate.boundHashOps(SystemConstants.redis_goods).get(id);
+        //http://192.168.3.5:9000/topsource-goodslist/good_image_1745522458983.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=admin%2F20250424%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250424T192141Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=b07a16a83b25b13aa7c72abf54304e38511a3f368dfae091809ba27aaf23388d
+        if(!StringUtils.isEmpty(goods.getImage())){
+            String goodsImage = goods.getImage();
+            int beginIndexOf = goodsImage.lastIndexOf("/") + 1;
+            int lastIndexOf = goodsImage.lastIndexOf("?");
+            String image = goodsImage.substring(beginIndexOf, lastIndexOf);
+
+            try {
+                minioClient.removeObject(RemoveObjectArgs.builder()
+                        .bucket("topsource-goodslist")
+                        .object(image)
+                        .build());
+            } catch (Exception e) {
+                log.error("Minio operation goods_deleteMinio failed: " + e.getMessage());
             }
         }
         try {

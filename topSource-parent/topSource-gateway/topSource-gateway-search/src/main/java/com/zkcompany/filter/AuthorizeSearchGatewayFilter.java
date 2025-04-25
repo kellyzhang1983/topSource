@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +28,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 @Component
-public class AuthorizeSearhGatewayFilter implements GlobalFilter, Ordered {
+public class AuthorizeSearchGatewayFilter implements GlobalFilter, Ordered {
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -44,15 +43,21 @@ public class AuthorizeSearhGatewayFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         //2.获取响应对象
         ServerHttpResponse response = exchange.getResponse();
-
+        //3.判断请求路径是否在白名单内，如果在白名单内，请求放行！
         String requestURI = request.getURI().getPath();
         boolean contains = Arrays.asList(ignoredUrls).contains(requestURI);
         if(contains){
-            ServerHttpRequest httpRequest = request.mutate().header("reuqest-from-gateway","true").build();
+            Consumer<HttpHeaders> httpHeaders = new Consumer<HttpHeaders>() {
+                @Override
+                public void accept(HttpHeaders httpHeaders) {
+                    httpHeaders.add("fegin-intereptor-whitelist", "true");
+                    httpHeaders.add("reuqest-from-gateway","true");
+                }
+            };
+            ServerHttpRequest httpRequest = request.mutate().headers(httpHeaders).build();
             return chain.filter(exchange.mutate().request(httpRequest).build());
         }
-
-        ///3 从头header中获取令牌数据
+        //4 从头header中获取令牌数据
         String authorization = request.getHeaders().getFirst("Authorization");
 
         if(StringUtils.isEmpty(authorization)){

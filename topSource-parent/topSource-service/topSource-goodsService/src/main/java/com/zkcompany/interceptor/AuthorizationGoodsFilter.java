@@ -28,7 +28,7 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class AuthorizationOrderFilter extends OncePerRequestFilter {
+public class AuthorizationGoodsFilter extends OncePerRequestFilter {
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -60,10 +60,9 @@ public class AuthorizationOrderFilter extends OncePerRequestFilter {
         }
 
         String GATWAY_TOKEN = request.getHeader("GATWAY_TOKEN");
-
         if(StringUtils.isEmpty(GATWAY_TOKEN)){
             //todo 不是从网关访问，返回，不予放行
-            redisTemplate.boundValueOps(SystemConstants.redis_errorSecurityOrderService_message).set("请携带token进行访问!!");
+            redisTemplate.boundValueOps(SystemConstants.redis_errorSecurityGoodsService_message).set("请携带token进行访问!");
             throw new RuntimeException("请携带token进行访问!");
         }else{
             //解析token后。是一个JSONObject,数据格式{user:{name:XXX,password:XXX},user_role:['ROLE_user','ROLE_admin']}这种格式

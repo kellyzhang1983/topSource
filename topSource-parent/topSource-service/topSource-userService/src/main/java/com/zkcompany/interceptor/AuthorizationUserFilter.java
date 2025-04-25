@@ -45,17 +45,23 @@ public class AuthorizationUserFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        //1、获取请求路径、表头信息，已经白名单路径。
+        //1、获取请求路径、表头信息，白名单路径。
         String contextPath = request.getRequestURI();
-        String header = request.getHeader("reuqest-from-gateway");
+        String gatewayHeader = request.getHeader("reuqest-from-gateway");
+        String feginIntereptor = request.getHeader("fegin-intereptor");
         boolean contains = Arrays.asList(ignoredUrls).contains(contextPath);
+        //2、首先判断是不是从fegin接口的拦截器过来的请求，如果是拦截器过来的请求并且请求地址在白名单内，进行放行，如果请求地址不在白名单内，security后续过滤器会过滤掉
+        if(!StringUtils.isEmpty(feginIntereptor)){
+            filterChain.doFilter(request,response);
+            return;
+        }
 
-        //首先判断是不是从网关进行访问
-        if(StringUtils.isEmpty(header)){
-            redisTemplate.boundValueOps(SystemConstants.redis_errorSecurityUserService_message).set("请从网关进行访问!");
+        //3、判断是不是从网关进行访问
+        if(StringUtils.isEmpty(gatewayHeader)){
+            redisTemplate.boundValueOps(SystemConstants.redis_errorSecurityGoodsService_message).set("请从网关进行访问!");
             throw new RuntimeException("请从网关进行访问!");
         }
-        //其次再判断请求地址是否加入白名单，如果在白名内，自动放行
+        //4、其次再判断请求地址是否加入白名单，如果在白名内，自动放行
         if(contains){
             filterChain.doFilter(request,response);
             return;

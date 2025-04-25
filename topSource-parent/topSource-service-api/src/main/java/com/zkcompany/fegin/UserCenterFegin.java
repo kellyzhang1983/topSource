@@ -32,6 +32,6 @@ public interface UserCenterFegin {
     public Result addUser(@RequestParam (value = "username")  String username,
                           @RequestParam (value = "password")  String password);
 
-    @GetMapping("/findUserStatus")
+    @GetMapping("/user/findUserStatus")
     public Result findUserStatus(@RequestParam(value = "status") String status);
 }

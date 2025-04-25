@@ -4,10 +4,12 @@ import com.zkcompany.entity.Result;
 import com.zkcompany.entity.StatusCode;
 import com.zkcompany.fegin.UserCenterFegin;
 import com.zkcompany.pojo.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 @Component
+@Slf4j
 public class UserServerFallBack implements UserCenterFegin {
     @Override
     public Result<User> findUser(String id) {

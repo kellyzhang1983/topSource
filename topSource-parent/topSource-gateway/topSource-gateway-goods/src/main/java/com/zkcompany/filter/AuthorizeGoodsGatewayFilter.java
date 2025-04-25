@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.zkcompany.entity.JwtUtil;
 import com.zkcompany.entity.Result;
-import com.zkcompany.entity.StatusCode;
 import com.zkcompany.entity.SystemConstants;
 import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
@@ -29,14 +28,14 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 @Component
-public class AuthorizeUserGatewayFilter implements GlobalFilter, Ordered {
+public class AuthorizeGoodsGatewayFilter implements GlobalFilter, Ordered {
     @Autowired
     private RedisTemplate redisTemplate;
 
     @Value("${security.ignored}")
     private String[] ignoredUrls;
 
-    String sub = "";
+    private String sub = "";
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -61,7 +60,7 @@ public class AuthorizeUserGatewayFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange.mutate().request(httpRequest).build());
         }
 
-        //4 从头header中获取令牌数据
+        ///3 从头header中获取令牌数据
         String authorization = request.getHeaders().getFirst("Authorization");
 
         if(StringUtils.isEmpty(authorization)){
@@ -112,6 +111,7 @@ public class AuthorizeUserGatewayFilter implements GlobalFilter, Ordered {
             String result_jsonString = JSON.toJSONString(result);
             return response.writeWith(Mono.just(response.bufferFactory().wrap(result_jsonString.getBytes())));
         }
+
         //7、添加头信息 传递给微服务
         //ServerHttpRequest json_token = request.mutate().header("GATWAY_TOKEN", sub).build();
         Consumer<HttpHeaders> gatway_token = new Consumer<HttpHeaders>() {

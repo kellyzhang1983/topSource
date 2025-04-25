@@ -13,6 +13,7 @@
         <module>topSource-gateway-order</module>
         <module>topSource-gateway-user</module>
         <module>topSource-gateway-search</module>
+        <module>topSource-gateway-goods</module>
     </modules>
 
     <artifactId>topSource-gateway</artifactId>

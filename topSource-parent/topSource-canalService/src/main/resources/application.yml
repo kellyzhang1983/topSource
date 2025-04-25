@@ -49,6 +49,11 @@ elasticsearch:
     password: "kelly19831017"
     certs: "D:/ES_8.17.4/config/certs/http.p12"
 
+minioclient:
+  url: http://192.168.3.5:9000
+  accessKey: admin
+  secreKey: kelly19831017
+
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
