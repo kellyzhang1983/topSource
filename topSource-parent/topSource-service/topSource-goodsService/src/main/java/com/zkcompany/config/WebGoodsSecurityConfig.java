@@ -4,6 +4,7 @@ import com.zkcompany.entity.Result;
 import com.zkcompany.entity.SystemConstants;
 import com.zkcompany.interceptor.AuthorizationGoodsFilter;
 import com.zkcompany.interceptor.CustomHttpFirewallFilter;
+import com.zkcompany.interceptor.InnerInterceptor;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,13 +27,15 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.IOException;
 import java.util.Objects;
 
 @Configuration
 @Slf4j
-public class WebGoodsSecurityConfig {
+public class WebGoodsSecurityConfig implements WebMvcConfigurer {
 
     @Value("${security.ignored}")
     private String[] ignoredUrls;
@@ -42,6 +45,12 @@ public class WebGoodsSecurityConfig {
 
     @Autowired
     private AuthorizationGoodsFilter authorizationGoodsFilter;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new InnerInterceptor()).addPathPatterns("/**");
+    }
+
     @Bean
     public HttpFirewall httpFirewall() {
         StrictHttpFirewall firewall = new StrictHttpFirewall();

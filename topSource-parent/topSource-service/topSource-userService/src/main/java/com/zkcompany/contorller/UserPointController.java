@@ -1,6 +1,7 @@
 package com.zkcompany.contorller;
 
 
+import com.zkcompany.annotation.Inner;
 import com.zkcompany.entity.BusinessException;
 import com.zkcompany.entity.Result;
 import com.zkcompany.entity.StatusCode;
@@ -25,6 +26,12 @@ public class UserPointController {
 
     @Autowired
     private UserPointService userPointService;
+
+    @Inner
+    @PostMapping(value = "/addUserPointTimerTask")
+    public Result addUserPointTimerTask(@RequestBody Map<String,Object> body){
+        return addUserPoint(body);
+    }
 
     @PreAuthorize("hasAnyRole('user')")
     @PostMapping(value = "/addUserPoint")
@@ -62,13 +69,13 @@ public class UserPointController {
             return new Result(false, StatusCode.SC_NOT_FOUND,"没有该用户，不能操作积分！");
         }
     }
-
+    @PreAuthorize("hasAnyRole('user')")
     @GetMapping(value = "/findUserPoint")
     public Result findUserPoint(@RequestParam(value = "user_id") String user_id){
         List<Point> userPoint = userPointService.findUserPoint(user_id);
         return new Result(true, StatusCode.OK,"查询用户积分明细成功！",userPoint);
     }
-
+    @PreAuthorize("hasAnyRole('user')")
     @GetMapping(value = "/findUserTotalPoint")
     public Result findUserTotalPoint(@RequestParam(value = "user_id") String user_id){
 

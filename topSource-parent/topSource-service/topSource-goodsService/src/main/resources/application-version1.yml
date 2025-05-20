@@ -73,6 +73,10 @@ minioclient:
 logging:
   level:
     root: info
+    com:
+      zkcompany:
+        fegin:
+          SearchCenterFegin: debug
   file:
     name: goods-server.log
     path: E:/workSpace/topSource/logs/goodsservice

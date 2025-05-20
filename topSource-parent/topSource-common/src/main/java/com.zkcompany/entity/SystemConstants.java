@@ -22,7 +22,17 @@ public class SystemConstants {
     public static final String redis_userOrder_key = "userOrder_";
 
     public static final String redis_goods = "Goods";
-    public static final String redis_OrderGoods = "Order_Goods";
+    public static final String redis_orderGoods = "orderGoods";
+    //public static final String redis_orderGoodsUser = "orderGoodsUser";
+    public static final String redis_shopCartList = "shopCartList";
+    public static final String redis_shopCartUser = "shopCartUser";
+
+    public static final String redis_marketActivity = "marketActivity";
+    public static final String redis_marketActivityGoods = "marketActivityGoods";
+
+    public static final String redis_activityGoodsNum = "activityGoodsNum";
+    public static final String redis_activityStatus = "activityStatus";
+    public static final String redis_userActivityStatus = "userActivityStatus";
 
     public static final String redis_userRoleAndPermission = "userRoleAndPermission";
     public static final String redis_userRoleAndPermission_key = "userRoleAndPermission_";
@@ -33,6 +43,7 @@ public class SystemConstants {
     public static final String redis_errorSecurityGoodsService_message = "redis_errorSecurityGoodsService_message";
     public static final String redis_errorSecurityOrderService_message = "redis_errorSecurityOrderService_message";
     public static final String redis_errorSecurityUserService_message = "redis_errorSecurityUserService_message";
+    public static final String redis_errorSecurityMarketService_message = "redis_errorSecurityMarketService_message";
     public static final String redis_errorSecurity_message = "redis_errorSecurity_message";
 
 }

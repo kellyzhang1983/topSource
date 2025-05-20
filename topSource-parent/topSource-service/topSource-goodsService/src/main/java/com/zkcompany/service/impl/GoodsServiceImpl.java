@@ -3,9 +3,11 @@ package com.zkcompany.service.impl;
 import com.zkcompany.dao.GoodsMapper;
 import com.zkcompany.entity.IdWorker;
 import com.zkcompany.entity.Result;
+import com.zkcompany.entity.StatusCode;
 import com.zkcompany.entity.WorldTime;
 import com.zkcompany.fegin.SearchCenterFegin;
 import com.zkcompany.pojo.Goods;
+import com.zkcompany.pojo.Order;
 import com.zkcompany.service.GoodsService;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
@@ -74,6 +76,26 @@ public class GoodsServiceImpl implements GoodsService, UserDetailsService {
     public Result searchGoods(Map paramBody) throws Exception {
         Result result = searchCenterFegin.searchKeywords(paramBody);
         return result;
+    }
+
+    @Override
+    public int updateGoods(Goods good) throws Exception {
+        goodsMapper.updateByPrimaryKey(good);
+        return 0;
+    }
+
+    @Override
+    public Result updateGoodsNumInventory(Goods goods, String flag) throws Exception {
+        switch (flag){
+            case "add":
+                goodsMapper.addGoodsNumInventory(goods.getNum(),flag);
+                break;
+            case "reduce":
+                goodsMapper.reduceGoodsNumInventory(goods.getNum(),flag);
+                break;
+        }
+
+        return new Result(true, StatusCode.SC_OK,"修改商品库存成功！");
     }
 
 

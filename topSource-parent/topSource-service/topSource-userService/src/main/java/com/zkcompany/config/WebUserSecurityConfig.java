@@ -5,11 +5,13 @@ import com.zkcompany.entity.StatusCode;
 import com.zkcompany.entity.SystemConstants;
 import com.zkcompany.interceptor.AuthorizationUserFilter;
 import com.zkcompany.interceptor.CustomHttpFirewallFilter;
+import com.zkcompany.interceptor.InnerInterceptor;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,19 +34,29 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.IOException;
 import java.util.Objects;
 
 @Configuration
 @Slf4j
-public class WebUserSecurityConfig {
+public class WebUserSecurityConfig implements WebMvcConfigurer {
+
+    @Value("${security.ignored}")
+    private String[] ignoredUrls;
 
     @Autowired
     private RedisTemplate redisTemplate;
 
     @Autowired
     private AuthorizationUserFilter authorizationUserFilter;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new InnerInterceptor()).addPathPatterns("/**");
+    }
 
     @Bean
     public HttpFirewall httpFirewall() {
@@ -81,8 +93,8 @@ public class WebUserSecurityConfig {
                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         ).authorizeHttpRequests(authorize -> authorize
                //允许登录地址进行访问。
-               //.requestMatchers("/user/**").permitAll()
-                       .anyRequest()
+               .requestMatchers(ignoredUrls).permitAll()
+                        .anyRequest()
                        .authenticated()
                );
 

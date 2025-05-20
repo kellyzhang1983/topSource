@@ -1,9 +1,7 @@
 package com.zkcompany.listener.impl;
 
 import com.alibaba.otter.canal.protocol.CanalEntry;
-import com.zkcompany.service.ProcessGoodsData;
-import com.zkcompany.service.ProcessOrderData;
-import com.zkcompany.service.ProcessUserData;
+import com.zkcompany.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,6 +23,21 @@ public class ListenerMessage implements com.zkcompany.listener.ListenerMessage {
 
     @Autowired
     private ProcessGoodsData processGoodsData;
+
+    @Autowired
+    private ProcessShopCartData processShopCartData;
+
+    @Autowired
+    private ProcessOrderGoodsData processOrderGoodsData;
+
+    @Autowired
+    private ProcessMarketActivity processMarketActivity;
+
+    @Autowired
+    private ProcessActivityGoods processActivityGoods;
+
+    @Autowired
+    private ProcessActivityStatusData processActivityStatusData;
 
     private List<List<CanalEntry.Column>> columnList(CanalEntry.RowChange rowChange,CanalEntry.EventType eventType){
         List<List<CanalEntry.Column>> columnsTatail = new ArrayList<>();
@@ -106,6 +119,48 @@ public class ListenerMessage implements com.zkcompany.listener.ListenerMessage {
                     }else if (eventType == CanalEntry.EventType.DELETE) {
                         processGoodsData.goods_deleteEs(List);
                     }
+                    break;
+                case "tb_shopping_cart":
+                    if (eventType == CanalEntry.EventType.INSERT || eventType == CanalEntry.EventType.UPDATE){
+                        processShopCartData.shopCart_addAndUpdateRedis(List);
+                    }else if (eventType == CanalEntry.EventType.DELETE) {
+                        processShopCartData.shopCart_deleteRedis(List);
+                    }
+                    break;
+                case "tb_order_goods":
+                    if (eventType == CanalEntry.EventType.INSERT || eventType == CanalEntry.EventType.UPDATE) {
+                        if(count == 0){
+                            processMethod = "processOrderGoodsData.orderGoods_addOrUpdateRedis方法";
+                        }
+                        count =  processOrderGoodsData.orderGoods_addOrUpdateRedis(List,userMap,count);
+                    }else if (eventType == CanalEntry.EventType.DELETE){
+                        processOrderGoodsData.orderGoods_deleteRedis(List);
+                    }
+                    break;
+                case "tb_market_activity":
+                    if (eventType == CanalEntry.EventType.INSERT || eventType == CanalEntry.EventType.UPDATE){
+                        processMarketActivity.marketActivity_addOrUpdateRedis(List);
+                    }else if (eventType == CanalEntry.EventType.DELETE) {
+                        processMarketActivity.marketActivity_deleteRedis(List);
+                    }
+                    break;
+                case "tb_activity_goods":
+                    if (eventType == CanalEntry.EventType.INSERT || eventType == CanalEntry.EventType.UPDATE) {
+                        if(count == 0){
+                            processMethod = "processActivityGoods.activityGoods_addOrUpdateRedis方法";
+                        }
+                        count =  processActivityGoods.activityGoods_addOrUpdateRedis(List,userMap,count);
+                    }else if (eventType == CanalEntry.EventType.DELETE){
+                        processActivityGoods.activityGoods_deleteRedis(List);
+                    }
+                    break;
+                case "tb_activity_status":
+                    if (eventType == CanalEntry.EventType.INSERT || eventType == CanalEntry.EventType.UPDATE){
+                        processActivityStatusData.activityStatus_addOrUpdateRedis(List);
+                    }else if (eventType == CanalEntry.EventType.DELETE) {
+                        processActivityStatusData.activityStatus_deleteRedis(List);
+                    }
+                    break;
             }
         }
         if(count != 0) {

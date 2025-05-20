@@ -45,4 +45,9 @@ public class UserServerFallBack implements UserCenterFegin {
     public Result findUserStatus(String status) {
         return null;
     }
+
+    @Override
+    public Result addUserPointTimerTask(Map<String, Object> body) {
+        return new Result<>(false, StatusCode.SC_INTERNAL_SERVER_ERROR,"UserCenterFegin（addUserPointTimerTask）：远程服务调用失败,请查看详细信息！.....");
+    }
 }

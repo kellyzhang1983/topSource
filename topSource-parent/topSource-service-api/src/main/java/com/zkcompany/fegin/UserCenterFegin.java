@@ -1,16 +1,18 @@
 package com.zkcompany.fegin;
 
 
-import com.zkcompany.config.FeignConfig;
+import com.zkcompany.annotation.InnerMethodCall;
+import com.zkcompany.config.FeignApiConfig;
 import com.zkcompany.entity.Result;
 import com.zkcompany.fallback.UserServerFallBack;
 import com.zkcompany.pojo.User;
+import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@FeignClient(name = "user-server",configuration = FeignConfig.class, fallback = UserServerFallBack.class)
+@FeignClient(name = "user-server",configuration = FeignApiConfig.class, fallback = UserServerFallBack.class)
 public interface UserCenterFegin {
     @GetMapping("/user/findUser")
     public Result<User> findUser(@RequestParam(value = "id")  String id);
@@ -34,4 +36,8 @@ public interface UserCenterFegin {
 
     @GetMapping("/user/findUserStatus")
     public Result findUserStatus(@RequestParam(value = "status") String status);
+
+    @PostMapping(value = "/point/addUserPointTimerTask")
+    @InnerMethodCall
+    public Result addUserPointTimerTask(@RequestBody Map<String,Object> body);
 }

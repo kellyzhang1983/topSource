@@ -19,9 +19,11 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+#        instance-id: ${spring.application.name}:${server.port}
+#        ip: 192.168.3.5
         username: nacos
         password: nacos
-        port: 8082
+        port: ${server.port}
         namespace: topsource_dev
         group: TOPSOURCE_GROUP
       config:
@@ -47,35 +49,6 @@ spring:
           mime-types: text/xml,application/xml,application/json
         response:
           enabled: true
-
-
-rocketmq:
-  # 命名服务器地址，多个地址用分号分隔
-  name-server: 127.0.0.1:19876
-  producer:
-    # 生产者组名称
-    group: producer_orderProcess
-    # 发送消息超时时间，单位毫秒
-    send-message-timeout: 3000
-    # 消息最大大小，单位字节，发送8M的数据
-    max-message-size: 8388608
-    # 开启透明重试机制、默认是false
-    enable-transparent-retry: true
-    # 重试次数
-    retry-times-when-send-failed: 3
-    # 设置异步发送失败时的最大重试次数为 3 次
-    retry-times-when-send-async-failed: 3
-  consumer:
-    # 消费者组名称
-    group: consume_orderProcess
-    # 订阅的主题和标签，多个订阅用逗号分隔
-    topic: topic_orderProcess,topic_orderProcess_delay
-    # 一次拉取的最大消息数量，默认是10条
-    pull-batch-size: 30
-    # 消费线程最小数量
-    consume-thread-min: 1
-    # 消费线程最大数量
-    consume-thread-max: 50
 
 seata:
   application-id: ${spring.application.name}
@@ -103,6 +76,7 @@ seata:
       username: nacos
       password: nacos
 
+
 #eureka:
 #  client:
 #    service-url:
@@ -120,7 +94,7 @@ resilience4j:
   timelimiter:
     configs:
       default:
-        timeout-duration: 10s
+        timeout-duration: 300s
   circuitbreaker:
     configs:
       default:
@@ -149,15 +123,15 @@ resilience4j:
       default:
         #最大并发调用数为 10。它限制了对受舱壁保护的资源的并发访问数量。
         #例如，当有多个请求同时尝试访问被该舱壁保护的服务时，最多允许 10 个请求同时进行调用，其余请求将被放入队列（如果队列有空间）或者等待。
-        maxConcurrentCalls: 10
+        maxConcurrentCalls: 5
         #最大等待时长为 200 毫秒。当请求因为并发调用数达到上限而无法立即执行时，它们会在队列中等待，等待的最长时间为 200 毫秒。
         #如果超过这个时间，请求可能会被拒绝或触发其他处理逻辑。
-        maxWaitDuration: 200ms
+        maxWaitDuration: 1000ms
         #队列容量为 10。当并发调用数已满时，额外的请求会被放入队列等待处理，这个队列最多可以容纳 10a 个请求。
         #如果队列已满，再有新的请求到来，可能会直接触发拒绝策略等。
         #queueCapacity: 10
     instances:
-      someBulkheadInstance:
+      orderServer_placeMarketOrder:
         baseConfig: default
 
 #白名单设置
@@ -176,9 +150,12 @@ logging:
       zkcompany:
         fegin:
           UserCenterFegin: debug
+          MarketCenterFegin: debug
+          GoodsCenterFegin: debug
+          RocketmqCenterFegin: debug
   file:
     name: order-server.log
-    path: E:/workSpace/topSource/logs/
+    path: E:/workSpace/topSource/logs/orderserver
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 控制台日志输出格式
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 文件日志输出格式

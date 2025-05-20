@@ -21,4 +21,3 @@ spring:
       - optional:nacos:common-redis-properties.yaml
       - optional:nacos:common-nacos-properties.yaml
       - optional:nacos:common-seata-properties.yaml
-      - optional:nacos:common-rocketmq-properties.yaml

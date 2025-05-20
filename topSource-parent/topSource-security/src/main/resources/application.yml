@@ -35,6 +35,9 @@ mybatis:
 security:
   ignored:
     "/userAuthentication/login"
+  jwt:
+    # token访问周期为180天
+    token-acess-to-live: 15552000000
 
 
 logging:
@@ -42,7 +45,7 @@ logging:
     root: info
   file:
     name: security-server.log
-    path: E:/workSpace/topSource/logs/canalservice
+    path: E:/workSpace/topSource/logs/securityservice
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 控制台日志输出格式
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 文件日志输出格式

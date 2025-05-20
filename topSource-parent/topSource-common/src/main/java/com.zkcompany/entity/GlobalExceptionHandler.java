@@ -14,6 +14,6 @@ public class GlobalExceptionHandler {
     public Result error(BusinessException e){
         String customMessage = e.getCustomMessage() == null ? "" : e.getCustomMessage();
         log.error("SystemExceptionMessage：" +  e.getMessage() +  "；BusinessException：" +  customMessage );
-        return  new Result(false,e.getCode(), "SystemExceptionMessage：" +  e.getMessage() +  "；<br>BusinessException：" +  customMessage );
+        return  new Result(false,e.getCode(), "SystemExceptionMessage：" +  e.getMessage() +  "；BusinessException：" +  customMessage );
     }
 }

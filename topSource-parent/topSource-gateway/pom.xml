@@ -14,6 +14,7 @@
         <module>topSource-gateway-user</module>
         <module>topSource-gateway-search</module>
         <module>topSource-gateway-goods</module>
+        <module>topSource-gateway-market</module>
     </modules>
 
     <artifactId>topSource-gateway</artifactId>

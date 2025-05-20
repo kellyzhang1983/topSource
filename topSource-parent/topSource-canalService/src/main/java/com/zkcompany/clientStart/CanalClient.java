@@ -78,7 +78,7 @@ public class CanalClient {
                     int size = message.getEntries().size();
                     if (batchId == -1 || size == 0) {
                         try {
-                            log.info("当前线程休眠3秒钟：" +Thread.currentThread().getName());
+                            //log.info("当前线程休眠3秒钟：" +Thread.currentThread().getName());
                             Thread.sleep(3000);
                         } catch (InterruptedException e) {
                             log.error(e.getMessage());
@@ -113,6 +113,7 @@ public class CanalClient {
                     //同步后续数据进行处理
                     listenerMessage.processData(tableName,rowChange,eventType);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     log.error(e.getMessage() + "【canalServiceError:CanalClient】CanalClient.processMessage()解析ROW级数据失败！");
                 }
             }

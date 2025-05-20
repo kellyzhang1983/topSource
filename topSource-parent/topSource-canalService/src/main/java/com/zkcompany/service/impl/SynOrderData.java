@@ -39,7 +39,7 @@ public class SynOrderData implements ProcessOrderData {
                     String userid = userMap.get(column.getValue());
                     if(StringUtils.isEmpty(userid)){
                         //查询数据库，把所有user_id想同的数据全部查询出来，返回一个List<Order>
-                        List<Order> orders = userOrderMapper.searchUserOrder(name);
+                        List<Order> orders = userOrderMapper.searchUserOrder(column.getValue());
                         try {
                             //放入Redis中，数据格式为Map<user_id,List<Order>>
                             redisTemplate.boundHashOps(SystemConstants.redis_userOrder).put(column.getValue(),orders);
@@ -72,10 +72,18 @@ public class SynOrderData implements ProcessOrderData {
     @Override
     public void order_deleteRedis(List<CanalEntry.Column> columns) {
         String id = "";
+        String userId = "";
 
         for (CanalEntry.Column column : columns){
             if(column.getName().equals("id")){
                 id = column.getValue();
+            }
+
+            if(column.getName().equals("user_id")){
+                userId = column.getValue();
+            }
+
+            if(!StringUtils.isEmpty(id) && !StringUtils.isEmpty(userId)){
                 break;
             }
         }
@@ -85,5 +93,20 @@ public class SynOrderData implements ProcessOrderData {
             // 处理异常，例如记录日志或采取其他措施
             log.error("Redis operation order_deleteRedis failed: " + e.getMessage());
         }
+
+        List<Order> orderList = (List<Order>)redisTemplate.boundHashOps(SystemConstants.redis_userOrder).get(userId);
+        for(Order order : orderList){
+            if(order.getId().equals(id)){
+                orderList.remove(order);
+                try {
+                    redisTemplate.boundHashOps(SystemConstants.redis_userOrder).put(userId,orderList);
+                } catch (Exception e) {
+                    log.error("Redis operation order_deleteRedis failed: " + e.getMessage());
+                }
+                break;
+            }
+        }
+
+
     }
 }

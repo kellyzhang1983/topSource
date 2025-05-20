@@ -14,6 +14,7 @@ import com.zkcompany.service.UserAuthenticaitonService;
 import com.zkcompany.dao.UserRoleMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -60,6 +61,9 @@ public class UserDetailsServiceImpl implements UserAuthenticaitonService {
     @Autowired
     private IdWorker idWorker;
 
+    @Value("${security.jwt.token-acess-to-live}")
+    private Long tokenAcessToLive;
+
     @Override
     public String loginUser(String username, String password) {
         //Security 自己的验证框架，只需要传入用户名、密码
@@ -84,8 +88,8 @@ public class UserDetailsServiceImpl implements UserAuthenticaitonService {
         jwtMap.put("user_role", userRoleString == null ? new ArrayList<String>(): userRoleString);
         String jwtMap_jsonString = JSON.toJSONString(jwtMap);
 
-        //利用JWT，得到Token、token有效期初步定能为7天
-        String jwt = JwtUtil.createJWT(jwtMap_jsonString, Long.valueOf(7*24*60*60*1000));
+        //利用JWT，得到Token、token有效期初步定能为180天
+        String jwt = JwtUtil.createJWT(jwtMap_jsonString, tokenAcessToLive);
         //把token加入redis缓存中。如果注销，删除缓存中的token
         redisTemplate.boundHashOps(SystemConstants.redis_userToken).put(user.getUsername(),jwt);
         return jwt;

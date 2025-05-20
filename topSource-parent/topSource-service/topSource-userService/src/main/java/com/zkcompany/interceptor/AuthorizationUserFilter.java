@@ -49,6 +49,8 @@ public class AuthorizationUserFilter extends OncePerRequestFilter {
         String contextPath = request.getRequestURI();
         String gatewayHeader = request.getHeader("reuqest-from-gateway");
         String feginIntereptor = request.getHeader("fegin-intereptor");
+        String timerTaskOrListenerMQ = request.getHeader("timerTaskOrListenerMQ");
+        String GATWAY_TOKEN = request.getHeader("GATWAY_TOKEN");
         boolean contains = Arrays.asList(ignoredUrls).contains(contextPath);
         //2、首先判断是不是从fegin接口的拦截器过来的请求，如果是拦截器过来的请求并且请求地址在白名单内，进行放行，如果请求地址不在白名单内，security后续过滤器会过滤掉
         if(!StringUtils.isEmpty(feginIntereptor)){
@@ -56,18 +58,27 @@ public class AuthorizationUserFilter extends OncePerRequestFilter {
             return;
         }
 
-        //3、判断是不是从网关进行访问
-        if(StringUtils.isEmpty(gatewayHeader)){
-            redisTemplate.boundValueOps(SystemConstants.redis_errorSecurityGoodsService_message).set("请从网关进行访问!");
-            throw new RuntimeException("请从网关进行访问!");
-        }
-        //4、其次再判断请求地址是否加入白名单，如果在白名内，自动放行
-        if(contains){
+        //3. 判断请求是否来自内部的定时任务
+        if(!StringUtils.isEmpty(timerTaskOrListenerMQ)){
+            //调用UsernamePasswordAuthenticationToken标明这个对象，已通过验证，后续来拦截器不会拦截。
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(null, null, null);
+            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             filterChain.doFilter(request,response);
             return;
         }
 
-        String GATWAY_TOKEN = request.getHeader("GATWAY_TOKEN");
+        //4、判断是不是从网关进行访问
+        if(StringUtils.isEmpty(gatewayHeader)){
+            if(StringUtils.isEmpty(GATWAY_TOKEN)){
+                redisTemplate.boundValueOps(SystemConstants.redis_errorSecurityUserService_message).set("请从网关进行访问!");
+                throw new RuntimeException("请从网关进行访问!");
+            }
+        }
+        //5、其次再判断请求地址是否加入白名单，如果在白名内，自动放行
+        if(contains){
+            filterChain.doFilter(request,response);
+            return;
+        }
 
         if(StringUtils.isEmpty(GATWAY_TOKEN)){
             //todo 不是从网关访问，返回，不予放行

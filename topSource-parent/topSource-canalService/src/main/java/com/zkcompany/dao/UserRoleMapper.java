@@ -13,9 +13,6 @@ public interface UserRoleMapper extends Mapper<UserRole> {
             "and ur.user_id = #{user_id}")
     List<UserRole> selectRole(String user_id);
 
-    @Select("SELECT DISTINCT user_id AS user_id FROM db_user.tb_user_roles")
-    List<UserRole> selectAllRole();
-
     @Select("SELECT r.role_name as role_name FROM db_user.tb_user_roles ur,db_user.tb_roles r " +
             "where  ur.role_id = r.role_id " +
             "and ur.user_id = #{user_id}")

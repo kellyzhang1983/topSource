@@ -4,6 +4,7 @@ import com.zkcompany.entity.Result;
 import com.zkcompany.entity.SystemConstants;
 import com.zkcompany.interceptor.AuthorizationOrderFilter;
 import com.zkcompany.interceptor.CustomHttpFirewallFilter;
+import com.zkcompany.interceptor.InnerInterceptor;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.rebalance.AllocateMessageQueueAveragely;
 import org.apache.rocketmq.spring.core.RocketMQPushConsumerLifecycleListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -27,19 +29,29 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.IOException;
 import java.util.Objects;
 
 @Configuration
 @Slf4j
-public class WebOrderSecurityConfig {
+public class WebOrderSecurityConfig implements WebMvcConfigurer {
+
+    @Value("${security.ignored}")
+    private String[] ignoredUrls;
 
     @Autowired
     private RedisTemplate redisTemplate;
 
     @Autowired
     private AuthorizationOrderFilter authorizationOrderFilter;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new InnerInterceptor()).addPathPatterns("/**");
+    }
 
     @Bean
     public HttpFirewall httpFirewall() {
@@ -68,7 +80,7 @@ public class WebOrderSecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         ).authorizeHttpRequests(authorize -> authorize
                 //所有请求都要被验证。
-                //.requestMatchers("/user/**").permitAll()
+                .requestMatchers(ignoredUrls).permitAll()
                 .anyRequest()
                 .authenticated()
         );

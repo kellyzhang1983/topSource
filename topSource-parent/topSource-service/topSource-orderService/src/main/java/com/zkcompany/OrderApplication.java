@@ -14,7 +14,6 @@ import tk.mybatis.spring.annotation.MapperScan;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
-@EnableScheduling
 @MapperScan(basePackages = "com.zkcompany.dao")
 @EnableMethodSecurity
 public class OrderApplication {

@@ -106,7 +106,7 @@ public class SynGoodsData implements ProcessGoodsData {
         try {
             redisTemplate.boundHashOps(SystemConstants.redis_goods).delete(id);
         } catch (Exception e) {
-            log.error("Redis operation goods_deleteEs failed: " + e.getMessage());
+            log.error("Redis operation goods_deleteRedis failed: " + e.getMessage());
         }
         try {
             DeleteRequest request = new DeleteRequest.Builder()

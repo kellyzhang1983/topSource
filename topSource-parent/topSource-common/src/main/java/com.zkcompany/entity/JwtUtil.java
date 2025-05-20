@@ -107,44 +107,42 @@ public class JwtUtil {
      * @return
      */
     public static SecretKey generalKey() {
-byte[] encodedKey = JwtUtil.SECRET_KEY.getBytes();
-SecretKey key = new SecretKeySpec(encodedKey,"HmacSHA384");
-//SecretKey key = Keys.hmacShaKeyFor(encodedKey);
-return key;
-}
+    byte[] encodedKey = JwtUtil.SECRET_KEY.getBytes();
+    SecretKey key = new SecretKeySpec(encodedKey,"HmacSHA384");
+    //SecretKey key = Keys.hmacShaKeyFor(encodedKey);
+    return key;
+    }
 
 
-/**
-* 解析令牌数据
-*
-* @param jwt
-* @return
-* @throws Exception
-*/
-public static Claims parseJWT(String jwt) throws Exception {
-SecretKey secretKey = generalKey();
-/*return Jwts.parser()
-.setSigningKey(secretKey)
-.parseClaimsJws(jwt)
-.getBody();*/
-return Jwts.parser()
-.verifyWith(secretKey)
-.build()
-.parseSignedClaims(jwt)
-.getPayload();
-}
+    /**
+    * 解析令牌数据
+    *
+    * @param jwt
+    * @return
+    * @throws Exception
+    */
+    public static Claims parseJWT(String jwt) throws Exception {
+        SecretKey secretKey = generalKey();
+        /*return Jwts.parser()
+        .setSigningKey(secretKey)
+        .parseClaimsJws(jwt)
+        .getBody();*/
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(jwt)
+                .getPayload();
+    }
 
-public static void main(String[] args) {
-//String jwt = JwtUtil.createJWT("weiyibiaoshi", "aaaaaa", null);
-//System.out.println(jwt);
-String jwt = "eyJhbGciOiJIUzM4NCJ9.eyJqdGkiOiIzZTZlOTYzMi0wMjNmLTRmNmMtODc0My0wZWViYzVkZWJjZjAiLCJzdWIiOiJ7XCJ1c2VyX3JvbGVcIjpbXCJST0xFX2FkbWluXCIsXCJST0xFX3VzZXJcIl0sXCJzY29wZXNcIjpbXCJhcHBcIixcInRvcHNvdXJjZVwiXSxcInVzZXJcIjp7XCJjcmVhdGVkXCI6XCIyMDI1LTAxLTIxIDIyOjE0OjI2XCIsXCJlbWFpbFwiOlwieWV0QG1zbi5jb21cIixcImlkXCI6XCIxODgxNzA2OTI0NjU1OTAyNzIwXCIsXCJpcFwiOlwiMDowOjA6MDowOjA6MDoxXCIsXCJsYXN0VXBkYXRlXCI6XCIyMDI1LTAxLTIxIDIyOjE0OjI2XCIsXCJsYXN0X2xvZ2luX3RpbWVcIjpcIjIwMjUtMDEtMjEgMjI6MTQ6MjZcIixcIm5hbWVcIjpcIuWvh-mdmeeQvFwiLFwibmlja19uYW1lXCI6XCLog5zlpJrotJ_lsJFcIixcInBhc3N3b3JkXCI6XCIkMmEkMTAkSEpjM1dLam82dEM0NnpTanQ3Q0g4LjUzUXZXd1pLeExWdXI2Mm5iRnhmRUpXNHRIbGVoSUNcIixcInBob25lXCI6XCIxMzYwNDk3NzM1NVwiLFwic2V4XCI6XCIwXCIsXCJzb3VyY2VfdHlwZVwiOlwiMlwiLFwic3RhdHVzXCI6XCIxXCIsXCJ1c2VybmFtZVwiOlwia2VsbHkxXCJ9fSIsImlzcyI6InRvcHNvdXJjZSIsImlhdCI6MTc0MjI5NDg2NywiZXhwIjoxNzczODMwODY3fQ.veRSBwdnykkXquiYK_WsVbE10UZ7fJJjq2-bQeMj3nqr1TZIu6vi7TcwGnAqzuJS";
-try {
-Claims claims = JwtUtil.parseJWT(jwt);
-System.out.println(claims);
-} catch (Exception e) {
-e.printStackTrace();
-}
-
-
-}
+    public static void main(String[] args) {
+    //String jwt = JwtUtil.createJWT("weiyibiaoshi", "aaaaaa", null);
+    //System.out.println(jwt);
+        String jwt = "eyJhbGciOiJIUzM4NCJ9.eyJqdGkiOiJlYzdkMzEyYS00YjJlLTQyNjYtYmVjMy00NTE1MjUwODg3ZmEiLCJzdWIiOiJ7XCJ1c2VyX3JvbGVcIjpbXCJST0xFX3VzZXJcIl0sXCJ1c2VyXCI6e1wiY3JlYXRlZFwiOlwiMjAyNS0wMS0yMyAyMjoxNDozNFwiLFwiZW1haWxcIjpcIjg4cHZxQHllYWgubmV0XCIsXCJpZFwiOlwiMTg4MTcwNjk1ODMwMjYwOTQwOFwiLFwiaXBcIjpcIjA6MDowOjA6MDowOjA6MVwiLFwibGFzdFVwZGF0ZVwiOlwiMjAyNS0wMS0yMSAyMjoxNDozNFwiLFwibmFtZVwiOlwi546L5pm25q-TXCIsXCJwYXNzd29yZFwiOlwiXCIsXCJwaG9uZVwiOlwiMTU3MDM4OTcyMDRcIixcInNleFwiOlwiMFwiLFwic3RhdHVzXCI6XCIwXCIsXCJ1c2VybmFtZVwiOlwia2VsbHkzXCJ9fSIsImlzcyI6InRvcHNvdXJjZSIsImlhdCI6MTc0NzI1NTg0MCwiZXhwIjoxNzQ1NjI3OTcxfQ.7LABPbPiutOQjoOEBsVgsFIfP7UXMEWR00uLaeG7O1LOkKkKeldMlPQNfMDH7Vl5";
+        try {
+            Claims claims = JwtUtil.parseJWT(jwt);
+            System.out.println(claims);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -34,7 +34,7 @@ spring:
         - id: order-route
           uri: lb://order-server
           predicates:
-            - Path=/api/order/**
+            - Path=/api/order/**,/api/shopCart/**
           filters:
             - StripPrefix=1
       default-filters:

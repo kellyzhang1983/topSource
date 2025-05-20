@@ -25,7 +25,7 @@ public class UserAuthenticationController {
         String jwt_token = userAuthenticaitonService.loginUser(user.getUsername(), user.getPassword());
         Map<String,String> token = new HashMap<>();
         token.put("token",jwt_token);
-        return new Result<>(true, StatusCode.OK,"登录成功！",token);
+        return new Result<>(true, StatusCode.SC_OK,"登录成功！",token);
     }
 
     @GetMapping("/update")
@@ -41,7 +41,7 @@ public class UserAuthenticationController {
         } catch (Exception e) {
             return new Result<>(false, StatusCode.ERROR,"用户注销失败！请看查看异常情况",e.getMessage());
         }
-        return new Result<>(true, StatusCode.OK,"用户注销成功！");
+        return new Result<>(true, StatusCode.SC_OK,"用户注销成功！");
     }
 
     @PostMapping ("/createUser")
@@ -49,6 +49,6 @@ public class UserAuthenticationController {
     public Result createUser(@RequestBody User user){
         UserDetails userDetails = new LoginUser(user,null);
         userAuthenticaitonService.createUser(userDetails);
-        return new Result<>(true, StatusCode.OK,"创建用户成功！");
+        return new Result<>(true, StatusCode.SC_OK,"创建用户成功！");
     }
 }

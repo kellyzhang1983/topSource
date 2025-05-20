@@ -1,22 +1,28 @@
 package com.zkcompany.service;
 
 import com.zkcompany.entity.Result;
-import com.zkcompany.pojo.Order;
-import com.zkcompany.pojo.User;
+import com.zkcompany.pojo.*;
 
+import java.util.List;
 import java.util.Map;
 
 public interface OrderService {
     Result<User> searchUser(String id) throws Exception;
 
-    Result<User> addUserPoint(String user_id) throws Exception;
-    int paySatus(Order order) throws Exception;
+    Result createOrder(String userId, List<ShopCart> shopCarts) throws Exception;
 
-    int cancelOrder(Order order) throws Exception;
+    List<Order> selectUserOrder(String userId) throws Exception;
 
-    int cretaOrder(Order order) throws Exception;
+    int payOrderStatus(String orderId) throws Exception;
 
-    String placeOrder(String user_id) throws Exception;
+    int refundOrder(String orderId) throws Exception;
 
-    Order searchOrder(String order_id) throws Exception;
+    Result placeMarketOrder(String userId, ActivityGoods activityGoods) throws Exception;
+
+    void fallbackGoodNum(Order order) throws Exception;
+
+    void fallbackGoodSaleNum(Order order) throws Exception;
+
+
+
 }
