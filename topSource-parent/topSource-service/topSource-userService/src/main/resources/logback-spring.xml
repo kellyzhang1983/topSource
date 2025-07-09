@@ -75,7 +75,7 @@
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="ROLLING_FILE"/>
         <appender-ref ref="ERROR_FILE"/>
-        <appender-ref ref="ELASTIC" />
+        <!--<appender-ref ref="ELASTIC" />-->
     </root>
 
 </configuration>

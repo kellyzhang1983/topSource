@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>topSource-userService</artifactId>
+    <packaging>jar</packaging>
     <description>
         用户中心服务，继承与服务父工程
     </description>

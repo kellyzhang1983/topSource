@@ -84,7 +84,6 @@ public class WebSecurityConfig{
                         response.getWriter().println(result.toJsonString(result));
                     }
                 }).accessDeniedHandler(new AccessDeniedHandler() {
-                    @Override
                     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
                         response.setContentType("application/json;charset=UTF-8");
                         Result<Object> result = new Result<>(false, HttpStatus.FORBIDDEN.value(), "你的权限不足！请查看异常信息",accessDeniedException.getLocalizedMessage());

@@ -1,5 +1,6 @@
 package com.zkcompany.controller;
 
+import com.zkcompany.entity.BusinessException;
 import com.zkcompany.entity.Result;
 import com.zkcompany.entity.StatusCode;
 import com.zkcompany.pojo.*;
@@ -105,7 +106,7 @@ public class OrderController {
         try {
             result = orderService.placeMarketOrder(getUserid(),activityGoods);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new BusinessException(StatusCode.SC_INTERNAL_SERVER_ERROR,e.getMessage(),"【OrderController.placeMarketOrder】orderService.placeMarketOrder调用失败，请查看详细信息！");
         }
         return  result;
     }

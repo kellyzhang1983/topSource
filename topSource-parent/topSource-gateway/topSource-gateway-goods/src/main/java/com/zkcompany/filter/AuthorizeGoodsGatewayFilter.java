@@ -48,7 +48,6 @@ public class AuthorizeGoodsGatewayFilter implements GlobalFilter, Ordered {
         boolean contains = Arrays.asList(ignoredUrls).contains(requestURI);
         if(contains){
             //.header("reuqest-from-gateway","true")
-
             Consumer<HttpHeaders> httpHeaders = new Consumer<HttpHeaders>() {
                 @Override
                 public void accept(HttpHeaders httpHeaders) {

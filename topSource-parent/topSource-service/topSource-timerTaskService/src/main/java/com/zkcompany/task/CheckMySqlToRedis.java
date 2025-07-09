@@ -25,7 +25,7 @@ public class CheckMySqlToRedis {
     @Autowired
     private MarketDataBaseAndRedisService marketDataBaseAndRedisService;
 
-    @Scheduled(cron = "0 30 23 * * ?")
+    @Scheduled(cron = "0 45 03 * * ?")
     public void checkTbUserTimerTask(){
         boolean syncTbUser = userDataBaseAndRedisService.checkTbUserToRedis();
         if(!syncTbUser){
@@ -49,7 +49,7 @@ public class CheckMySqlToRedis {
         }
     }
 
-    @Scheduled(cron = "0 05 00 * * ?")
+    @Scheduled(cron = "0 46 03 * * ?")
     public void checkTbOderTimerTask(){
         boolean syncTbOrder = orderDataBaseAndRedisService.checkTbOrder();
         if(!syncTbOrder){
@@ -74,7 +74,7 @@ public class CheckMySqlToRedis {
 
     }
 
-    @Scheduled(cron = "0 45 23 * * ?")
+    @Scheduled(cron = "0 47 03 * * ?")
     public void checkTbGoodsTimerTask(){
         boolean syncTbGoods = goodsDataBaseAndRedisService.checkTbGoods();
         if(!syncTbGoods){
@@ -84,7 +84,7 @@ public class CheckMySqlToRedis {
         }
     }
 
-    @Scheduled(cron = "0 55 23 * * ?")
+    @Scheduled(cron = "0 48 03 * * ?")
     public void checkTbMarketActivityTimerTask() {
         boolean syncTbMarketActivity = marketDataBaseAndRedisService.checkTbMarket();
         if(!syncTbMarketActivity){

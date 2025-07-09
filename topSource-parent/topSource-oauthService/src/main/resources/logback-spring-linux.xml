@@ -14,10 +14,11 @@
     <!-- 滚动文件输出 appender，按时间和大小滚动 -->
     <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 滚动文件输出 appender，按时间和大小滚动 <file>${log.path}/${app.name}.log</file>-->
+        <!--<file>E:/workSpace/topSource/logs/searchgateway/search-gateway-server.log</file>-->
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- 日志文件名格式，按日期和时间分割 -->
             <!--<fileNamePattern>${log.path}/${app.name}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>-->
-            <fileNamePattern>E:/workSpace/topSource/logs/timertaskserver/timertask-server_%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>/application/logs/oauthservice/oauth-server_%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <!-- 单个日志文件最大大小 -->
             <maxFileSize>10MB</maxFileSize>
             <!-- 保存历史日志文件的最大天数 -->
@@ -33,14 +34,14 @@
     <!-- 通过 TCP 发送到 Logstash/Filebeat -->
     <appender name="ELASTIC" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <!-- Logstash 的 TCP 输入端口 -->
-        <destination>localhost:5044</destination>
+        <destination>192.168.131.1:5044</destination>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level> <!-- 仅允许ERROR及以上 -->
-            <onMatch>ACCEPT</onMatch>   <!-- 如果是 ERROR，则放行 -->
+            <onMatch>ACCEPT</onMatch>   <!-- 如果是 ERROR/FATAL，则放行 -->
             <onMismatch>DENY</onMismatch> <!-- 其他级别直接丢弃 -->
         </filter>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <customFields>{"module": "topSource-timerTaskService", "env": "dev"}</customFields>
+            <customFields>{"module": "topSource-oauthService", "env": "dev"}</customFields>
         </encoder>
     </appender>
 
@@ -52,9 +53,9 @@
             <onMismatch>DENY</onMismatch>
         </filter>
         <!-- <file>${log.path}/${app.name}-error.log</file>  -->
+        <!--<file>E:/workSpace/topSource/logs/searchgateway/search-gateway-server_error.log</file>-->
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <!--<fileNamePattern>${log.path}/${app.name}-error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>-->
-            <fileNamePattern>E:/workSpace/topSource/logs/timertaskserver/timertask-server_error_%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>/application/logs/oauthservice/oauth-server_error_%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>10MB</maxFileSize>
             <maxHistory>30</maxHistory>
             <totalSizeCap>1GB</totalSizeCap>
@@ -70,6 +71,7 @@
         <appender-ref ref="ROLLING_FILE"/>
         <appender-ref ref="ERROR_FILE"/>
     </logger>
+
 
     <!-- 根日志记录器配置 -->
     <root level="INFO">

@@ -121,16 +121,12 @@
 
     <build>
         <plugins>
+            <!-- 如果存在 spring-boot-maven-plugin，显式禁用可执行 jar -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.zkcompany.MainClass</mainClass>
-                        </manifest>
-                    </archive>
+                    <skip>true</skip> <!-- 关键：禁止生成可执行 jar -->
                 </configuration>
             </plugin>
         </plugins>

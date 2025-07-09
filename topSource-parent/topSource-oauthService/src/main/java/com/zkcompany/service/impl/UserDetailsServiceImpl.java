@@ -42,46 +42,6 @@ public class UserDetailsServiceImpl implements UserAuthenticaitonService {
     @Autowired
     private RedisTemplate redisTemplate;
 
-
-    //没太明白为什么要加延迟加载、这表明userDetailsServiceImpl依赖于authenticationManager，同时authenticationManager又依赖于userDetailsServiceImpl，形成了循环依赖。
-    @Autowired
-    @Lazy
-    private AuthenticationManager authenticationManager;
-
-
-    @Override
-    public String loginUser(String username, String password) {
-        //Security 自己的验证框架，只需要传入用户名、密码
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username,password);
-        //这个方法还是会执行loadUserByUsername方法，Security自己的验证框架。
-        Authentication authenticate = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-        //得到用户信息
-        LoginUser loginUser = (LoginUser)authenticate.getPrincipal();
-
-        if(Objects.isNull(loginUser)){
-            redisTemplate.boundValueOps(SystemConstants.redis_errorSecurity_message).set("用户名或密码错误！");
-            throw new UsernameNotFoundException("");
-        }
-        //通过框架验证后，得到用户信息。
-
-        User user = loginUser.getUser();
-        //去掉密码。
-        user.setPassword("");
-        //封装成JWT，把权限放进去
-        Map<String,Object> jwtMap = new HashMap<String,Object>();
-        jwtMap.put("user",user);
-        jwtMap.put("user_role", userRoleString == null ? new ArrayList<String>(): userRoleString);
-        String jwtMap_jsonString = JSON.toJSONString(jwtMap);
-
-        //利用JWT，得到Token、token有效期初步定能为7天
-        String jwt = JwtUtil.createJWT(jwtMap_jsonString, Long.valueOf(7*24*60*60*1000));
-        //把token加入redis缓存中。如果注销，删除缓存中的token
-        redisTemplate.boundHashOps(SystemConstants.redis_userToken).put(user.getUsername(),jwt);
-        return jwt;
-    }
-
-
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         boolean userExists = userExists(username);

@@ -1,11 +1,11 @@
 package com.zkcompany.service;
 
+import com.zkcompany.pojo.User;
 import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.provisioning.UserDetailsManager;
 
 public interface UserAuthenticaitonService extends UserDetailsManager,UserDetailsPasswordService {
 
-    String loginUser(String username,String password);
 /*
     void createUser(UserDetails user);
 

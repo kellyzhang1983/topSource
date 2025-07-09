@@ -10,10 +10,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>topSource-gateway-search</artifactId>
-
+    <packaging>jar</packaging>
     <properties>
+        <!-- 设置JDK版本为17 -->
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <!-- 设置项目源代码的字符集编码为 UTF-8 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- 设置项目报告输出的字符集编码为 UTF-8 -->
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
 </project>

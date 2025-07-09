@@ -78,7 +78,7 @@ public class CanalClient {
                     int size = message.getEntries().size();
                     if (batchId == -1 || size == 0) {
                         try {
-                            //log.info("当前线程休眠3秒钟：" +Thread.currentThread().getName());
+                            log.info("当前线程休眠3秒钟：" +Thread.currentThread().getName());
                             Thread.sleep(3000);
                         } catch (InterruptedException e) {
                             log.error(e.getMessage());

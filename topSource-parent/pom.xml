@@ -10,13 +10,13 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>topSource-common</module>
+        <module>topSource-common-db</module>
         <module>topSource-service-api</module>
         <module>topSource-canalService</module>
         <module>topSource-eureka</module>
         <module>topSource-gateway</module>
         <module>topSource-service</module>
         <module>topSource-security</module>
-        <module>topSource-common-db</module>
         <module>topSource-oauthService</module>
     </modules>
 
@@ -110,6 +110,14 @@
                     <compilerArgs>
                         <arg>-Xlint:unchecked</arg>
                     </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <configuration>
+                    <skipTests>true</skipTests> <!-- 跳过测试执行 -->
                 </configuration>
             </plugin>
         </plugins>

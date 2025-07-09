@@ -1,45 +1,24 @@
-server:
-  port: 9099
-
 spring:
-  application:
-    name: oauth-service
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/db_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
-    username: root
-    password: 123456
-  data:
-    redis:
-      host: 127.0.0.1
-      port: 7001
-      password: 123456
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
-        username: nacos
-        password: nacos
-        port: 9099
-        namespace: topsource_dev
-        group: TOPSOURCE_GROUP
-      config:
-        import-check:
-          enabled: false
-  main:
-    allow-bean-definition-overriding: true
+  profiles:
+   include:
+     - linux1
 
-mybatis:
-  configuration:
-    map-underscore-to-camel-case: true
 
-logging:
-  level:
-    root: info
-  file:
-    name: oauth-server.log
-    path: E:/workSpace/topSource/logs/oauthservice
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 控制台日志输出格式
-    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 文件日志输出格式
-  config: classpath:logback-spring.xml
+#spring:
+#  application:
+#    name: order-server
+#  config:
+#    import: nacos:${spring.cloud.nacos.config.server-addr}?file-extension=yaml&group=${spring.cloud.nacos.config.group}&namespace=${spring.cloud.nacos.config.namespace}
+#  cloud:
+#    nacos:
+#      config:
+#        server-addr: 127.0.0.1:8848
+#        namespace: topsource_dev
+#        group: TOPSOURCE_GROUP
+#        username: nacos
+#        password: nacos
+#        file-extension: yaml
+
+
+
+

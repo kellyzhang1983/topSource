@@ -9,6 +9,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+/***
+ *  内部访问拦截器：
+ *  request请求访问controller层，如果有@Inner注释，那么只允许内部方法访问，不允许外部请求访问；
+ *  适用于场景，内部定时任务访问fegin接口调用其它服务
+ */
 public class InnerInterceptor implements HandlerInterceptor {
 
     @Override

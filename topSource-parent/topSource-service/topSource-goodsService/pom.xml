@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>topSource-goodsService</artifactId>
-
+    <packaging>jar</packaging>
     <properties>
         <!-- 设置JDK版本为17 -->
         <maven.compiler.source>17</maven.compiler.source>

@@ -5,7 +5,9 @@ import com.zkcompany.entity.StatusCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,23 +29,23 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
 @Configuration
+@Slf4j
 public class WebOauthSercurityConfig {
 
     //http://localhost:9099/oauth2/authorize?client_id=zk&response_type=code&scope=topsource&redirect_uri=http://www.baidu.com
     //http://localhost:9099/oauth2/authorize?client_id=huawei&response_type=code&scope=app%20topsource&redirect_uri=http://huawei.com
+    //http://192.168.131.128:9099/oauth2/authorize?client_id=huawei&response_type=code&scope=app%20topsource&redirect_uri=http://huawei.com
 
     @Autowired
     private CustomJwtGeneratorAndDecoder customJwtGeneratorAndDecoder;
 
     @Autowired
     private CustomJwtRefreshTokenGenerator customJwtRefreshTokenGenerator;
-
-    @Autowired
-    private RegisteredClientRepository registeredClientRepository;
 
     //自定义token生产规则，JWT编码以及解码
     @Bean
@@ -136,8 +138,8 @@ public class WebOauthSercurityConfig {
                             // 从 HttpSessionRequestCache缓存中获取原始请求
                             SavedRequest savedRequest = requestCache().getRequest(request, response);
                             if (savedRequest != null) {
-                                //截取原始请求的参数？问号后面一串
                                 String[] urlSplit = savedRequest.getRedirectUrl().split("error");
+                                //截取原始请求的参数？问号后面一串
                                 url.append(urlSplit[1]);
                                 response.sendRedirect(url.toString());
                             }else {
@@ -152,8 +154,22 @@ public class WebOauthSercurityConfig {
     @Bean
     public HttpSessionRequestCache requestCache() {
         //自定义缓存逻辑
-        HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
-        requestCache.setMatchingRequestParameterName(null); // 禁用匹配参数
+        HttpSessionRequestCache requestCache = new HttpSessionRequestCache() {
+
+            @Override
+            public void saveRequest(HttpServletRequest request, HttpServletResponse response) {
+                String requestUri = request.getRequestURI();
+                // 只缓存 /oauth2/authorize 请求，忽略 /error 和 /favicon.ico
+                if (requestUri.equals("/error")) {
+                    String client_id = request.getParameter("client_id");
+                    if(!StringUtils.isEmpty(client_id)){
+                        super.saveRequest(request, response);
+                    }
+
+                }
+            }
+        };
+        requestCache.setMatchingRequestParameterName(null); // 禁用参数匹配
         return requestCache;
     }
 

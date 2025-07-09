@@ -15,7 +15,7 @@ public class CheckMysqlToEsData {
     @Autowired
     private GoodsDataBaseAndEsService goodsDataBaseAndEsService;
 
-    @Scheduled(cron = "0 05 23 * * ?")
+    @Scheduled(cron = "0 10 09 * * ?")
     public void checkTbGoodsTimerTask() {
         Boolean syn = null;
         try {

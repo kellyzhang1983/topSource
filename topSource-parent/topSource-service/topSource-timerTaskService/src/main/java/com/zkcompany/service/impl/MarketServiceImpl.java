@@ -18,10 +18,7 @@ public class MarketServiceImpl implements MarketService{
 
     @Override
     public void updateMarketActivityStatus(MarketActivity marketActivity) throws Exception {
-        marketActivity.setCreateDate(WorldTime.chinese_time(marketActivity.getCreateDate()));
-        marketActivity.setBeginDate(WorldTime.chinese_time(marketActivity.getBeginDate()));
-        marketActivity.setEndDate(WorldTime.chinese_time(marketActivity.getEndDate()));
-        marketActivityMapper.updateByPrimaryKey(marketActivity);
+        marketActivityMapper.updateMarketAcitivity(marketActivity.getActivityStatus(),marketActivity.getId());
     }
 
 

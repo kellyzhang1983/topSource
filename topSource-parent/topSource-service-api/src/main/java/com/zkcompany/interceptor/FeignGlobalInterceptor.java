@@ -10,7 +10,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-
+/**
+ * 动态fegin拦截器：
+ * 1、正常从网关过来的请求：上下文attributes一定不为NULL；只需要判断在不在白名单即可
+ * 2、MQ监听、定时任务如果要调用动态fegin，那么此时没有上下文路径，会执行：requestTemplate.header("timerTaskOrListenerMQ","true");各个微服务拦截器会放行
+ */
 @Configuration
 public class FeignGlobalInterceptor implements RequestInterceptor {
     @Override

@@ -42,10 +42,19 @@
             <artifactId>topSource-common-db</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
-
-
-
     </dependencies>
+
+    <build>
+        <plugins>
+            <!-- 如果存在 spring-boot-maven-plugin，显式禁用可执行 jar -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip> <!-- 关键：禁止生成可执行 jar -->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

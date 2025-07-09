@@ -16,11 +16,11 @@
         <module>topSource-goodsService</module>
         <module>topSource-marketService</module>
         <module>topSource-rocketmqService</module>
-        <module>topSource-rocketmqService</module>
         <module>topSource-timerTaskService</module>
     </modules>
 
     <artifactId>topSource-service</artifactId>
+
     <description>
         所有服务的父工程
     </description>

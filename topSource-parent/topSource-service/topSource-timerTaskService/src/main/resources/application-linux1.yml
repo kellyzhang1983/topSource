@@ -1,0 +1,190 @@
+server:
+  port: 8088
+spring:
+  application:
+    name: timertask-server
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.131.128:4033/db_order?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC #Asia/Shanghai
+    username: root
+    password: kelly19831017
+  main:
+    allow-bean-definition-overriding: true
+  data:
+    redis:
+      cluster:
+        nodes:
+          - 192.168.131.128:7001
+          - 192.168.131.128:7002
+          - 192.168.131.128:7003
+          - 192.168.131.128:7004
+          - 192.168.131.128:7005
+          - 192.168.131.128:7006
+        max-redirects: 3
+      password: kelly19831017
+      lettuce:
+        pool:
+          # 连接池最大活跃连接数（默认8）
+          max-active: 16
+          # 连接池最大空闲连接数（默认8）
+          max-idle: 8
+          # 连接池最小空闲连接数（默认0）
+          min-idle: 4
+          # 获取连接的最大等待时间（默认-1，无限等待）
+          max-wait: 1000ms
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.131.128:8848,192.168.131.128:8852
+        username: nacos
+        password: nacos
+        port: ${server.port}
+        namespace: topsource_dev
+        group: TOPSOURCE_GROUP
+      config:
+        enabled: false
+        import-check:
+          enabled: false
+    openfeign:
+      circuitbreaker:
+        enabled: true
+      client:
+        config:
+          #全局链接时间和超时时间自行定义，默认是1分钟
+          user-server:
+            connect-timeout: 1000
+            read-timeout: 3000
+      # 开起自定义fegin用httpclient5链接，替代httpUrlConntion链接，提高链接性能
+      httpclient:
+        hc5:
+          enabled: true
+      compression:
+        request:
+          enabled: true
+          min-request-size: 1024
+          mime-types: text/xml,application/xml,application/json
+        response:
+          enabled: true
+
+seata:
+  application-id: ${spring.application.name}
+  enabled: true
+  enable-auto-data-source-proxy: true
+  tx-service-group: my_tx_group
+  registry:
+    type: nacos
+    nacos:
+      application: seata-tc-server
+      server-addr: 192.168.131.128:8848,192.168.131.128:8852
+      namespace: topsource_dev
+      group: SEATA_GROUP
+      username: nacos
+      password: nacos
+      cluster: seata-cluster
+  config:
+    type: nacos
+    nacos:
+      server-addr: 192.168.131.128:8848,192.168.131.128:8852
+      namespace: topsource_dev
+      data-id: seataServer.properties
+      group: SEATA_GROUP
+      username: nacos
+      password: nacos
+
+
+
+#eureka:
+#  client:
+#    service-url:
+#      # Eureka 服务器的地址
+#      defaultZone: http://127.0.0.1:10011/eureka
+#    # 将客户端服务注册到 Eureka 服务器
+#    register-with-eureka: true
+#    # 从 Eureka 服务器获取服务注册信息
+#    fetch-registry: true
+#  instance:
+#    prefer-ip-address: true # 优先使用 IP 地址进行注册
+#    #hostname: ${spring.application.name}
+
+resilience4j:
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 300s
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-type:  COUNT_BASED
+        #表示熔断器会统计最近5次请求，根据这5次请求的成功或失败来计算失败率
+        slidingWindowSize: 50
+        #1次请求后，熔断器才会计算成功失败率
+        minimumNumberOfCalls: 10
+        #表示熔断器半开状态，会允许3次请求去调用被保护的服务，根据这3次请求的结果来决定熔断的下一步状态
+        #1、半开状态是熔断器从打开（Open）状态过渡到关闭（Closed）状态的中间状态。
+        #2、在半开状态下，熔断器会允许一定数量的请求去尝试调用服务，以此来判断服务是否已经恢复正常。
+        #3、如果这些尝试请求中的成功率较高，熔断器会关闭；如果失败率再次超过阈值，熔断器会重新打开。
+        permittedNumberOfCallsInHalfOpenState: 3
+        #表示熔断器打开后会等待3秒，然后再进入半开状态，尝试恢复服务调用
+        #当熔断器打开后，在这段时间内所有对被保护服务的请求都会直接触发降级逻辑，不会实际调用服务。
+        #等待一段时间的目的是给服务足够的时间来恢复，避免在服务还未恢复时就频繁尝试调用，导致熔断器频繁开合。
+        waitDurationInOpenState: 5s
+        #表示当最近 slidingWindowSize 次请求（这里是 10 次）中的失败率达到 50% 时，熔断器会打开。
+        failureRateThreshold: 50
+    instances:
+      #第一个熔断
+      order_orderServcie_orderProcess:
+        base-config: default
+  bulkhead :
+    configs:
+      default:
+        #最大并发调用数为 10。它限制了对受舱壁保护的资源的并发访问数量。
+        #例如，当有多个请求同时尝试访问被该舱壁保护的服务时，最多允许 10 个请求同时进行调用，其余请求将被放入队列（如果队列有空间）或者等待。
+        maxConcurrentCalls: 5
+        #最大等待时长为 200 毫秒。当请求因为并发调用数达到上限而无法立即执行时，它们会在队列中等待，等待的最长时间为 200 毫秒。
+        #如果超过这个时间，请求可能会被拒绝或触发其他处理逻辑。
+        maxWaitDuration: 1000ms
+        #队列容量为 10。当并发调用数已满时，额外的请求会被放入队列等待处理，这个队列最多可以容纳 10a 个请求。
+        #如果队列已满，再有新的请求到来，可能会直接触发拒绝策略等。
+        #queueCapacity: 10
+    instances:
+      orderServer_placeMarketOrder:
+        baseConfig: default
+
+#白名单设置
+security:
+  ignored:
+    ""
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+elasticsearch:
+  client:
+    host: "192.168.3.5"
+    port: 9200
+    username: "elastic"
+    password: "kelly19831017"
+#    certs: "/application/certs/http.p12"
+    certs: "D:/ES_8.17.4/config/certs/http.p12"
+logging:
+  level:
+    root: info
+    com:
+      zkcompany:
+        fegin:
+          UserCenterFegin: debug
+          MarketCenterFegin: debug
+          GoodsCenterFegin: debug
+          RocketmqCenterFegin: debug
+  file:
+    name: timertask-server.log
+#    path: /application/logs/timertaskserver
+    path: E:/workSpace/topSource/logs/timertaskserver
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 控制台日志输出格式
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 文件日志输出格式
+  config: classpath:logback-spring-window.xml
+
+
+

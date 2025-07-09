@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>topSource-gateway-order</artifactId>
+    <packaging>jar</packaging>
     <description>
         订单中心网关，集成与网关父工程
     </description>
