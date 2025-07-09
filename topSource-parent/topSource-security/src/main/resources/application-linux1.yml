@@ -1,0 +1,68 @@
+server:
+  port: 9091
+
+spring:
+  application:
+    name: security-center-server
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.131.100:4033/db_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: proxysql
+    password: kelly19831017
+  data:
+    redis:
+      cluster:
+        nodes:
+          - 192.168.131.128:7001
+          - 192.168.131.128:7002
+          - 192.168.131.128:7003
+          - 192.168.131.128:7004
+          - 192.168.131.128:7005
+          - 192.168.131.128:7006
+        max-redirects: 3
+      password: kelly19831017
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 4
+          max-wait: 1000ms
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.131.128:8848,192.168.131.128:8849
+        username: nacos
+        password: nacos
+        port: 9091
+        namespace: topsource_dev
+        group: TOPSOURCE_GROUP
+      config:
+        import-check:
+          enabled: false
+        enabled: false
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+security:
+  ignored:
+    "/userAuthentication/login"
+  jwt:
+    # token访问周期为180天
+    token-acess-to-live: 15552000000
+
+
+logging:
+  level:
+    root: info
+    com.alibaba.nacos: DEBUG
+  file:
+    name: security-server.log
+    path: E:/workSpace/topSource/logs/securityservice
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 控制台日志输出格式
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 文件日志输出格式
+  config: classpath:logback-spring-window.xml
+

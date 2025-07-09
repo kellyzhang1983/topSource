@@ -1,0 +1,87 @@
+server:
+  port: 8092
+spring:
+  application:
+    name: canal-client
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.131.128:4033/db_order?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: kelly19831017
+  data:
+    redis:
+      cluster:
+        nodes:
+          - 192.168.131.128:7001
+          - 192.168.131.128:7002
+          - 192.168.131.128:7003
+          - 192.168.131.128:7004
+          - 192.168.131.128:7005
+          - 192.168.131.128:7006
+        max-redirects: 3
+      password: kelly19831017
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 4
+          max-wait: 1000ms
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.131.128:8848,192.168.131.128:8852
+        username: nacos
+        password: nacos
+        port: 8092
+        namespace: topsource_dev
+        group: TOPSOURCE_GROUP
+      config:
+        import-check:
+          enabled: false
+        enabled: false
+
+#canal配置
+canal:
+  client:
+    instances:
+      # Canal 服务器地址
+      host: 192.168.131.128
+      # Canal 服务器端口
+      port: 11111
+      # Canal 实例名称
+      destination: example
+      username: "admin"
+      password: "admin"
+      # 批次大小，每次从 Canal 获取消息的最大数量
+      batchSize: 500
+
+elasticsearch:
+  client:
+    host: "192.168.131.1"
+    port: 9200
+    username: "elastic"
+    password: "kelly19831017"
+    certs: "D:/ES_8.17.4/config/certs/http.p12"
+
+minioclient:
+  url: http://192.168.131.1:9000
+  accessKey: admin
+  secreKey: kelly19831017
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+
+logging:
+  level:
+    root: info
+  file:
+    name: canal-server.log
+    path: E:/workSpace/topSource/logs/canalservice
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 控制台日志输出格式
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 文件日志输出格式
+  config: classpath:logback-spring-window.xml
+
+
